@@ -2,7 +2,7 @@
     "name": "zeit-tracking-app",
     "version": "1.0.0",
     "description": "A time tracking web application with timer, calendar, and PDF reporting features",
-    "homepage": "https://yourusername.github.io/zeit-tracking-app",
+    "homepage": "https://pizzacom.github.io/Random-AI-App",
     "private": true,
     "dependencies": {
         "date-fns": "^2.30.0",
