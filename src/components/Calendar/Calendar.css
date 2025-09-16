@@ -1,0 +1,452 @@
+.calendar-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: minmax(600px, 1fr) minmax(300px, 400px);
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Calendar Grid Section */
+.calendar-grid-section {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.calendar-header h2 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.calendar-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.nav-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+    background: #0056b3;
+    transform: translateY(-1px);
+}
+
+.current-month {
+    color: #2c3e50;
+    font-size: 1.4rem;
+    margin: 0;
+    text-transform: capitalize;
+    min-width: 200px;
+}
+
+.today-btn {
+    margin-bottom: 1rem;
+}
+
+/* Work Intensity Legend */
+.work-legend {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #495057;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    border: 1px solid #dee2e6;
+}
+
+.legend-color.none {
+    background: #f8f9fa;
+}
+
+.legend-color.light {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+}
+
+.legend-color.normal {
+    background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+}
+
+.legend-color.heavy {
+    background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+}
+
+/* Calendar Grid */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    background: #e9ecef;
+    border-radius: 8px;
+    padding: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-weekday {
+    background: #495057;
+    color: white;
+    padding: 0.75rem 0.5rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.calendar-day {
+    background: #ffffff;
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    border-radius: 4px;
+}
+
+.calendar-day:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    z-index: 2;
+}
+
+.calendar-day.empty {
+    background: #f8f9fa;
+    cursor: default;
+    pointer-events: none;
+}
+
+.calendar-day.empty:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Work Intensity Colors */
+.calendar-day.none {
+    background: #f8f9fa;
+    color: #6c757d;
+}
+
+.calendar-day.light {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    color: #1565c0;
+}
+
+.calendar-day.normal {
+    background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+    color: white;
+}
+
+.calendar-day.heavy {
+    background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+    color: white;
+}
+
+/* Selected and Today States */
+.calendar-day.selected {
+    border: 3px solid #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.calendar-day.today {
+    border: 2px solid #dc3545;
+    font-weight: bold;
+}
+
+.calendar-day.today.selected {
+    border: 3px solid #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25), inset 0 0 0 1px #dc3545;
+}
+
+.day-number {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.entries-indicator {
+    background: rgba(255, 255, 255, 0.9);
+    color: #495057;
+    border-radius: 10px;
+    padding: 1px 6px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    min-width: 16px;
+    text-align: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Selected Day Section */
+.selected-day-section {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: sticky;
+    top: 2rem;
+}
+
+.selected-date-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.selected-date-header h3 {
+    color: #2c3e50;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.3rem;
+}
+
+.day-summary {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.entries-count,
+.total-time {
+    background: #f8f9fa;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #495057;
+    font-weight: 500;
+}
+
+.total-time {
+    background: #e8f5e8;
+    color: #28a745;
+}
+
+/* Calendar Actions and Buttons */
+.calendar-actions {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 2rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+}
+
+.time-entries-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 50vh;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.time-entries-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.time-entries-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.time-entries-list::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.time-entries-list::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.no-entries {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: #6c757d;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px dashed #dee2e6;
+}
+
+.no-entries p {
+    margin: 0.5rem 0;
+}
+
+.no-entries p:first-child {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #495057;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 1200px) {
+    .calendar-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 1rem;
+        max-width: 800px;
+    }
+
+    .calendar-grid-section {
+        order: 1;
+    }
+
+    .selected-day-section {
+        order: 2;
+        position: static;
+        max-height: none;
+    }
+
+    .time-entries-list {
+        max-height: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .calendar-container {
+        padding: 0.5rem;
+        gap: 1rem;
+    }
+
+    .calendar-grid-section,
+    .selected-day-section {
+        padding: 1rem;
+    }
+
+    .calendar-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .calendar-navigation {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .nav-btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .current-month {
+        font-size: 1.2rem;
+        min-width: auto;
+    }
+
+    .work-legend {
+        gap: 1rem;
+        justify-content: space-around;
+    }
+
+    .legend-item {
+        font-size: 0.75rem;
+    }
+
+    .calendar-day {
+        min-height: 50px;
+    }
+
+    .day-number {
+        font-size: 1rem;
+    }
+
+    .entries-indicator {
+        font-size: 0.65rem;
+        padding: 1px 4px;
+    }
+
+    .selected-date-header h3 {
+        font-size: 1.1rem;
+    }
+
+    .day-summary {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .calendar-weekday {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.8rem;
+    }
+
+    .calendar-day {
+        min-height: 45px;
+    }
+
+    .day-number {
+        font-size: 0.9rem;
+    }
+
+    .work-legend {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .legend-item {
+        font-size: 0.7rem;
+    }
+
+    .legend-color {
+        width: 12px;
+        height: 12px;
+    }
+}
