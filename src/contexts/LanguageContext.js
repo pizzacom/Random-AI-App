@@ -18,6 +18,7 @@ const translations = {
         endTime: 'Endzeit',
         breakDuration: 'Pausendauer (Minuten)',
         description: 'Beschreibung (optional)',
+        setCurrentTime: 'Aktuelle Uhrzeit automatisch einfügen',
         startTimer: 'Starten',
         stopTimer: 'Gestoppt',
         manualEntry: 'Manueller Eintrag',
@@ -46,6 +47,27 @@ const translations = {
         confirmDelete: 'Eintrag löschen?',
         confirmDeleteMessage: 'Dieser Eintrag wird dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.',
 
+        // Legend and day types
+        legendNone: 'Keine Einträge',
+        legendNormal: 'Arbeitszeit',
+        legendSick: 'Krank',
+        legendVacation: 'Urlaub',
+        legendOvertime: 'Überstunden',
+        vacationDay: 'Urlaub',
+        sickDay: 'Krank',
+
+        // Day type buttons
+        setVacation: 'Urlaub setzen',
+        removeVacation: 'Urlaub entfernen',
+        setSick: 'Krank setzen',
+        removeSick: 'Krank entfernen',
+
+        // Alerts for day type conflicts
+        cannotSetVacationOnSickDay: 'Kann keinen Urlaub an einem Krankheitstag setzen',
+        cannotSetVacationOnWorkDay: 'Kann keinen Urlaub an einem Arbeitstag setzen',
+        cannotSetSickOnVacationDay: 'Kann keinen Krankheitstag an einem Urlaubstag setzen',
+        cannotSetSickOnWorkDay: 'Kann keinen Krankheitstag an einem Arbeitstag setzen',
+
         // Reports Component
         reportsTitle: 'Berichte & PDF Export',
         userInfo: 'Benutzerinformationen',
@@ -61,11 +83,22 @@ const translations = {
         totalTime: 'Gesamtzeit',
         breaks: 'Pausen',
         workTime: 'Arbeitszeit',
+        vacationDays: 'Urlaub',
+        sickDays: 'Krank',
         pdfExport: 'PDF Export',
         exportInfo: 'Erstellt eine professionelle PDF-Datei mit allen Zeiteinträgen des Monats.',
         noEntriesMonth: 'Keine Zeiteinträge für den ausgewählten Monat gefunden.',
         noDescription: 'Keine Beschreibung',
         total: 'Gesamt',
+
+        // Settings Component
+        settings: 'Einstellungen',
+        close: 'Schließen',
+        defaultSettings: 'Standardeinstellungen',
+        defaultBreakLength: 'Standard-Pausenzeit',
+        defaultBreakHelp: 'Diese Pausenzeit wird automatisch bei neuen Zeiteinträgen vorausgefüllt.',
+        enterName: 'Namen eingeben',
+        enterCompany: 'Firma eingeben',
 
         // Data Export Component
         dataExportTitle: 'Datenexport & Import',
@@ -158,6 +191,7 @@ const translations = {
         endTime: 'End Time',
         breakDuration: 'Break Duration (Minutes)',
         description: 'Description (optional)',
+        setCurrentTime: 'Insert current time automatically',
         startTimer: 'Start',
         stopTimer: 'Stopped',
         manualEntry: 'Manual Entry',
@@ -186,6 +220,27 @@ const translations = {
         confirmDelete: 'Delete Entry?',
         confirmDeleteMessage: 'This entry will be permanently deleted. This action cannot be undone.',
 
+        // Legend and day types
+        legendNone: 'No entries',
+        legendNormal: 'Work time',
+        legendSick: 'Sick day',
+        legendVacation: 'Vacation day',
+        legendOvertime: 'Overtime',
+        vacationDay: 'Vacation day',
+        sickDay: 'Sick day',
+
+        // Day type buttons
+        setVacation: 'Set vacation',
+        removeVacation: 'Remove vacation',
+        setSick: 'Set sick day',
+        removeSick: 'Remove sick day',
+
+        // Alerts for day type conflicts
+        cannotSetVacationOnSickDay: 'Cannot set vacation on a sick day',
+        cannotSetVacationOnWorkDay: 'Cannot set vacation on a work day',
+        cannotSetSickOnVacationDay: 'Cannot set sick day on a vacation day',
+        cannotSetSickOnWorkDay: 'Cannot set sick day on a work day',
+
         // Reports Component
         reportsTitle: 'Reports & PDF Export',
         userInfo: 'User Information',
@@ -201,6 +256,8 @@ const translations = {
         totalTime: 'Total Time',
         breaks: 'Breaks',
         workTime: 'Work Time',
+        vacationDays: 'Vacation Days',
+        sickDays: 'Sick Days',
         pdfExport: 'PDF Export',
         exportInfo: 'Creates a professional PDF file with all time entries for the month.',
         noEntriesMonth: 'No time entries found for the selected month.',
@@ -226,6 +283,15 @@ const translations = {
         supportedFormats: 'Supported formats:',
         csvFormat: 'CSV: Spreadsheet format, good for data analysis',
         jsonFormat: 'JSON: Complete backup with all metadata',
+
+        // Settings Component
+        settings: 'Settings',
+        close: 'Close',
+        defaultSettings: 'Default Settings',
+        defaultBreakLength: 'Default Break Length',
+        defaultBreakHelp: 'This break time will be automatically filled in for new time entries.',
+        enterName: 'Enter name',
+        enterCompany: 'Enter company',
 
         // Common
         edit: 'Edit',

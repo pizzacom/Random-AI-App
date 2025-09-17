@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useTimeEntries } from '../../hooks/useTimeEntries';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { generateAndDownloadReport } from '../../utils/pdfGenerator';
 import { formatDateGerman, calculateTotalHours, formatMinutesToHours, formatMinutesToTime } from '../../utils/timeCalculations';
 import { format, parseISO } from 'date-fns';
@@ -158,15 +159,62 @@ const YearGridSelector = ({ selectedMonth, onMonthChange }) => {
 const Reports = () => {
     const { t, currentLanguage } = useLanguage();
     const { getEntriesForMonth } = useTimeEntries();
+    const [vacationDays] = useLocalStorage('vacationDays', []);
+    const [sickDays] = useLocalStorage('sickDays', []);
+    const [userInfo] = useLocalStorage('userInfo', { name: '', company: '' });
     const [selectedMonth, setSelectedMonth] = useState(format(new Date(), 'yyyy-MM'));
-    const [userInfo, setUserInfo] = useState({
-        name: '',
-        company: ''
-    });
-    const [showUserForm, setShowUserForm] = useState(false);
 
     const monthEntries = getEntriesForMonth(selectedMonth);
     const totals = calculateTotalHours(monthEntries);
+
+    // Calculate vacation and sick days for the selected month
+    const monthVacationDays = vacationDays.filter(date => date.startsWith(selectedMonth));
+    const monthSickDays = sickDays.filter(date => date.startsWith(selectedMonth));
+
+    // Get all entries including dummy entries for vacation/sick days
+    const getAllEntriesForMonth = () => {
+        const allEntries = [...monthEntries];
+
+        // Add vacation dummy entries
+        monthVacationDays.forEach(date => {
+            // Only add if there are no work entries for this date
+            if (!monthEntries.some(entry => entry.date === date)) {
+                allEntries.push({
+                    id: `vacation-${date}`,
+                    date: date,
+                    startTime: '',
+                    endTime: '',
+                    duration: 0,
+                    breakDuration: 0,
+                    description: t('vacationDay'),
+                    isVacation: true,
+                    isDummy: true
+                });
+            }
+        });
+
+        // Add sick day dummy entries
+        monthSickDays.forEach(date => {
+            // Only add if there are no work entries for this date
+            if (!monthEntries.some(entry => entry.date === date)) {
+                allEntries.push({
+                    id: `sick-${date}`,
+                    date: date,
+                    startTime: '',
+                    endTime: '',
+                    duration: 0,
+                    breakDuration: 0,
+                    description: t('sickDay'),
+                    isSick: true,
+                    isDummy: true
+                });
+            }
+        });
+
+        return allEntries;
+    };
+
+    const allMonthEntries = getAllEntriesForMonth();
 
     const handleGenerateReport = () => {
         if (monthEntries.length === 0) {
@@ -174,15 +222,11 @@ const Reports = () => {
             return;
         }
 
-        generateAndDownloadReport(monthEntries, selectedMonth, userInfo);
+        generateAndDownloadReport(monthEntries, selectedMonth, userInfo, vacationDays, sickDays);
     };
 
-    const handleUserInfoSave = () => {
-        setShowUserForm(false);
-    };
-
-    // Group entries by date for display
-    const entriesByDate = monthEntries.reduce((acc, entry) => {
+    // Group entries by date for display (including dummy entries)
+    const entriesByDate = allMonthEntries.reduce((acc, entry) => {
         if (!acc[entry.date]) {
             acc[entry.date] = [];
         }
@@ -201,43 +245,6 @@ const Reports = () => {
                     selectedMonth={selectedMonth}
                     onMonthChange={setSelectedMonth}
                 />
-
-                <div className="user-info-section">
-                    <button
-                        className="btn btn-secondary"
-                        onClick={() => setShowUserForm(!showUserForm)}
-                    >
-                        👤 {t('userInfo')} {showUserForm ? t('hideUserInfo') : t('editUserInfo')}
-                    </button>
-
-                    {showUserForm && (
-                        <div className="user-info-form">
-                            <div className="form-group">
-                                <label htmlFor="userName">{t('name')}:</label>
-                                <input
-                                    type="text"
-                                    id="userName"
-                                    value={userInfo.name}
-                                    onChange={(e) => setUserInfo(prev => ({ ...prev, name: e.target.value }))}
-                                    placeholder={t('yourName')}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="userCompany">{t('company')}:</label>
-                                <input
-                                    type="text"
-                                    id="userCompany"
-                                    value={userInfo.company}
-                                    onChange={(e) => setUserInfo(prev => ({ ...prev, company: e.target.value }))}
-                                    placeholder={t('companyName')}
-                                />
-                            </div>
-                            <button className="btn btn-primary" onClick={handleUserInfoSave}>
-                                ✓ {t('save')}
-                            </button>
-                        </div>
-                    )}
-                </div>
             </div>
 
             <div className="reports-content">
@@ -261,7 +268,15 @@ const Reports = () => {
                         </div>
                         <div className="stat-card highlight">
                             <div className="stat-label">{t('workTime')}</div>
-                            <div className="stat-value">{formatMinutesToHours(totals.netTime)} {t('hours')}</div>
+                            <div className="stat-value">{formatMinutesToTime(totals.netTime)}</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-label">{t('vacationDays')}</div>
+                            <div className="stat-value">{monthVacationDays.length}</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-label">{t('sickDays')}</div>
+                            <div className="stat-value">{monthSickDays.length}</div>
                         </div>
                     </div>
                 </div>
@@ -282,7 +297,7 @@ const Reports = () => {
                 <div className="entries-preview">
                     <h4>{currentLanguage === 'de' ? 'Vorschau der Einträge' : 'Preview of Entries'}</h4>
 
-                    {monthEntries.length === 0 ? (
+                    {allMonthEntries.length === 0 ? (
                         <div className="no-entries">
                             <p>{t('noEntriesMonth')}</p>
                         </div>
@@ -306,14 +321,22 @@ const Reports = () => {
 
                                         <div className="day-entries">
                                             {dayEntries
-                                                .sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''))
+                                                .sort((a, b) => {
+                                                    // Sort dummy entries first, then by start time
+                                                    if (a.isDummy && !b.isDummy) return -1;
+                                                    if (!a.isDummy && b.isDummy) return 1;
+                                                    return (a.startTime || '').localeCompare(b.startTime || '');
+                                                })
                                                 .map(entry => (
-                                                    <div key={entry.id} className="entry-row">
+                                                    <div key={entry.id} className={`entry-row ${entry.isDummy ? 'dummy-entry' : ''}`}>
                                                         <div className="entry-time">
-                                                            {entry.startTime || '-'} - {entry.endTime || '-'}
+                                                            {entry.isDummy ?
+                                                                (entry.isVacation ? '🏖️' : '🤒') :
+                                                                `${entry.startTime || '-'} - ${entry.endTime || '-'}`
+                                                            }
                                                         </div>
                                                         <div className="entry-duration">
-                                                            {formatMinutesToTime(entry.duration || 0)}
+                                                            {entry.isDummy ? '-' : formatMinutesToTime(entry.duration || 0)}
                                                         </div>
                                                         <div className="entry-description">
                                                             {entry.description || t('noDescription')}

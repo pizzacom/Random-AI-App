@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { getCurrentTime, isValidTime, isValidTimeRange } from '../../utils/timeCalculations';
 import CustomTimePicker from '../TimeEntry/CustomTimePicker';
 import './TimeEntryForm.css';
 
 const TimeEntryForm = ({ onSave, onCancel, initialData = {} }) => {
     const { t } = useLanguage();
+    const [defaultBreakLength] = useLocalStorage('defaultBreakLength', 30);
+
     const [formData, setFormData] = useState({
         startTime: initialData.startTime || '',
         endTime: initialData.endTime || '',
-        breakDuration: initialData.breakDuration || 0,
+        breakDuration: initialData.breakDuration !== undefined ? initialData.breakDuration : defaultBreakLength,
         description: initialData.description || ''
     });
     const [errors, setErrors] = useState({});
@@ -83,7 +86,7 @@ const TimeEntryForm = ({ onSave, onCancel, initialData = {} }) => {
                                 type="button"
                                 className="btn btn-small"
                                 onClick={() => handleSetCurrentTime('startTime')}
-                                title="Aktuelle Zeit setzen"
+                                title={t('setCurrentTime') || 'Aktuelle Uhrzeit automatisch einfügen'}
                             >
                                 🕐
                             </button>
@@ -105,7 +108,7 @@ const TimeEntryForm = ({ onSave, onCancel, initialData = {} }) => {
                                 type="button"
                                 className="btn btn-small"
                                 onClick={() => handleSetCurrentTime('endTime')}
-                                title="Aktuelle Zeit setzen"
+                                title={t('setCurrentTime') || 'Aktuelle Uhrzeit automatisch einfügen'}
                             >
                                 🕐
                             </button>

@@ -6,11 +6,15 @@
 /**
  * Convert time entries array to CSV format
  * @param {Array} timeEntries - Array of time entry objects
+ * @param {Array} vacationDays - Array of vacation dates in YYYY-MM-DD format
+ * @param {Array} sickDays - Array of sick days in YYYY-MM-DD format
  * @returns {string} CSV formatted string
  */
-export const exportToCSV = (timeEntries) => {
+export const exportToCSV = (timeEntries, vacationDays = [], sickDays = []) => {
     if (!timeEntries || timeEntries.length === 0) {
-        return 'No data to export';
+        if (vacationDays.length === 0 && sickDays.length === 0) {
+            return 'No data to export';
+        }
     }
 
     // CSV Headers
@@ -21,7 +25,8 @@ export const exportToCSV = (timeEntries) => {
         'End Time',
         'Break Duration (minutes)',
         'Description',
-        'Total Duration (minutes)'
+        'Total Duration (minutes)',
+        'Type'
     ];
 
     // Convert entries to CSV rows
@@ -32,8 +37,40 @@ export const exportToCSV = (timeEntries) => {
         entry.endTime || '',
         entry.breakDuration || 0,
         `"${(entry.description || '').replace(/"/g, '""')}"`, // Escape quotes
-        entry.duration || 0
+        entry.duration || 0,
+        'work'
     ]);
+
+    // Add vacation days as rows
+    vacationDays.forEach(date => {
+        rows.push([
+            `vacation-${date}`,
+            date,
+            '',
+            '',
+            0,
+            '"Vacation Day"',
+            0,
+            'vacation'
+        ]);
+    });
+
+    // Add sick days as rows
+    sickDays.forEach(date => {
+        rows.push([
+            `sick-${date}`,
+            date,
+            '',
+            '',
+            0,
+            '"Sick Day"',
+            0,
+            'sick'
+        ]);
+    });
+
+    // Sort rows by date
+    rows.sort((a, b) => new Date(a[1]) - new Date(b[1]));
 
     // Combine headers and rows
     const csvContent = [headers, ...rows]
@@ -46,7 +83,7 @@ export const exportToCSV = (timeEntries) => {
 /**
  * Parse CSV content and convert to time entries array
  * @param {string} csvContent - CSV formatted string
- * @returns {Array} Array of time entry objects
+ * @returns {Object} Object containing timeEntries, vacationDays, and sickDays arrays
  */
 export const importFromCSV = (csvContent) => {
     if (!csvContent || typeof csvContent !== 'string') {
@@ -63,6 +100,8 @@ export const importFromCSV = (csvContent) => {
     const dataLines = lines.slice(1);
 
     const timeEntries = [];
+    const vacationDays = [];
+    const sickDays = [];
 
     for (let i = 0; i < dataLines.length; i++) {
         const line = dataLines[i].trim();
@@ -77,29 +116,42 @@ export const importFromCSV = (csvContent) => {
                 continue;
             }
 
-            const entry = {
-                id: values[0] || `imported-${Date.now()}-${i}`,
-                date: values[1] || '',
-                startTime: values[2] || '',
-                endTime: values[3] || '',
-                breakDuration: parseInt(values[4]) || 0,
-                description: values[5].replace(/^"|"$/g, '').replace(/""/g, '"') || '', // Remove outer quotes and unescape
-                duration: parseInt(values[6]) || 0
-            };
+            const type = values[7] || 'work'; // Default to work if type not specified
+            const date = values[1] || '';
 
-            // Validate required fields
-            if (!entry.date) {
+            if (!date) {
                 console.warn(`Skipping row ${i + 2}: missing date`);
                 continue;
             }
 
-            timeEntries.push(entry);
+            if (type === 'vacation') {
+                if (!vacationDays.includes(date)) {
+                    vacationDays.push(date);
+                }
+            } else if (type === 'sick') {
+                if (!sickDays.includes(date)) {
+                    sickDays.push(date);
+                }
+            } else {
+                // Regular work entry
+                const entry = {
+                    id: values[0] || `imported-${Date.now()}-${i}`,
+                    date: date,
+                    startTime: values[2] || '',
+                    endTime: values[3] || '',
+                    breakDuration: parseInt(values[4]) || 0,
+                    description: values[5].replace(/^"|"$/g, '').replace(/""/g, '"') || '', // Remove outer quotes and unescape
+                    duration: parseInt(values[6]) || 0
+                };
+
+                timeEntries.push(entry);
+            }
         } catch (error) {
             console.warn(`Error parsing row ${i + 2}:`, error.message);
         }
     }
 
-    return timeEntries;
+    return { timeEntries, vacationDays, sickDays };
 };
 
 /**
@@ -166,15 +218,21 @@ export const downloadCSV = (csvContent, filename = 'zeit-tracking-export.csv') =
  * Export to JSON format (more comprehensive backup)
  * @param {Array} timeEntries - Time entries array
  * @param {object} metadata - Additional metadata to include
+ * @param {Array} vacationDays - Array of vacation dates
+ * @param {Array} sickDays - Array of sick days
  * @returns {string} JSON formatted string
  */
-export const exportToJSON = (timeEntries, metadata = {}) => {
+export const exportToJSON = (timeEntries, metadata = {}, vacationDays = [], sickDays = []) => {
     const exportData = {
-        version: '1.0',
+        version: '1.1', // Updated version to support vacation/sick days
         exportDate: new Date().toISOString(),
         application: 'Zeit Tracking App',
         ...metadata,
-        data: timeEntries
+        data: {
+            timeEntries: timeEntries,
+            vacationDays: vacationDays,
+            sickDays: sickDays
+        }
     };
 
     return JSON.stringify(exportData, null, 2);
@@ -183,18 +241,30 @@ export const exportToJSON = (timeEntries, metadata = {}) => {
 /**
  * Import from JSON format
  * @param {string} jsonContent - JSON formatted string
- * @returns {Array} Array of time entry objects
+ * @returns {Object} Object containing timeEntries, vacationDays, and sickDays arrays
  */
 export const importFromJSON = (jsonContent) => {
     try {
         const importData = JSON.parse(jsonContent);
 
-        // Validate JSON structure
-        if (!importData.data || !Array.isArray(importData.data)) {
-            throw new Error('Invalid JSON format: missing or invalid data array');
+        // Handle both old and new JSON formats
+        if (importData.version === '1.1' && importData.data && typeof importData.data === 'object') {
+            // New format with structured data
+            return {
+                timeEntries: importData.data.timeEntries || [],
+                vacationDays: importData.data.vacationDays || [],
+                sickDays: importData.data.sickDays || []
+            };
+        } else if (importData.data && Array.isArray(importData.data)) {
+            // Old format - only time entries
+            return {
+                timeEntries: importData.data,
+                vacationDays: [],
+                sickDays: []
+            };
+        } else {
+            throw new Error('Invalid JSON format: missing or invalid data structure');
         }
-
-        return importData.data;
     } catch (error) {
         throw new Error(`JSON import failed: ${error.message}`);
     }

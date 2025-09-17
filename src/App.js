@@ -6,6 +6,7 @@ import DataExport from './components/DataExport/DataExport';
 import InstallPrompt from './components/PWA/InstallPrompt';
 import ThemeToggle from './components/ThemeToggle/ThemeToggle';
 import LanguageToggle from './components/LanguageToggle/LanguageToggle';
+import Settings from './components/Settings/Settings';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import './App.css';
@@ -21,6 +22,10 @@ function AppContent() {
             return 'timer';
         }
     });
+
+    // Animation state for tab switching
+    const [isAnimating, setIsAnimating] = useState(false);
+    const [animationDirection, setAnimationDirection] = useState('');
 
     // Save current tab to localStorage whenever it changes
     useEffect(() => {
@@ -38,8 +43,25 @@ function AppContent() {
         { id: 'data', label: `💾 ${t('data')}`, component: DataExport }
     ];
 
-    const currentComponent = navigationItems.find(item => item.id === currentView)?.component || Timer;
-    const CurrentComponent = currentComponent;
+    const handleTabSwitch = (newTab) => {
+        if (newTab === currentView || isAnimating) return;
+
+        // Determine animation direction
+        const currentIndex = navigationItems.findIndex(item => item.id === currentView);
+        const newIndex = navigationItems.findIndex(item => item.id === newTab);
+        const direction = newIndex > currentIndex ? 'next' : 'prev';
+
+        setIsAnimating(true);
+        setAnimationDirection(direction);
+
+        setTimeout(() => {
+            setCurrentView(newTab);
+            setTimeout(() => {
+                setIsAnimating(false);
+                setAnimationDirection('');
+            }, 300);
+        }, 150);
+    };
 
     return (
         <div className="app">
@@ -50,13 +72,14 @@ function AppContent() {
                             <button
                                 key={item.id}
                                 className={`nav-button ${currentView === item.id ? 'active' : ''}`}
-                                onClick={() => setCurrentView(item.id)}
+                                onClick={() => handleTabSwitch(item.id)}
                             >
                                 {item.label}
                             </button>
                         ))}
                     </div>
                     <div className="nav-right">
+                        <Settings />
                         <ThemeToggle />
                         <LanguageToggle />
                     </div>
@@ -65,7 +88,12 @@ function AppContent() {
 
             <main className="app-main">
                 <div className="main-content">
-                    <CurrentComponent />
+                    <div className={`tab-container ${isAnimating ? `sliding-${animationDirection}` : ''}`}>
+                        {(() => {
+                            const CurrentComponent = navigationItems.find(item => item.id === currentView)?.component || Timer;
+                            return <CurrentComponent />;
+                        })()}
+                    </div>
                 </div>
             </main>
 

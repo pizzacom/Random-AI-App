@@ -97,16 +97,20 @@
     background: #f8f9fa;
 }
 
-[data-theme="light"] .legend-color.light {
-    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-}
-
 [data-theme="light"] .legend-color.normal {
     background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
 }
 
-[data-theme="light"] .legend-color.heavy {
+[data-theme="light"] .legend-color.sick {
+    background: linear-gradient(135deg, #2196f3 0%, #42a5f5 100%);
+}
+
+[data-theme="light"] .legend-color.overtime {
     background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+}
+
+[data-theme="light"] .legend-color.vacation {
+    background: linear-gradient(135deg, #e91e63 0%, #f06292 100%);
 }
 
 /* Dark mode legend colors */
@@ -114,16 +118,20 @@
     background: #4a5568;
 }
 
-[data-theme="dark"] .legend-color.light {
-    background: linear-gradient(135deg, #4299e1 0%, #63b3ed 100%);
-}
-
 [data-theme="dark"] .legend-color.normal {
     background: linear-gradient(135deg, #48bb78 0%, #68d391 100%);
 }
 
-[data-theme="dark"] .legend-color.heavy {
+[data-theme="dark"] .legend-color.sick {
+    background: linear-gradient(135deg, #4299e1 0%, #63b3ed 100%);
+}
+
+[data-theme="dark"] .legend-color.overtime {
     background: linear-gradient(135deg, #ed8936 0%, #f6ad55 100%);
+}
+
+[data-theme="dark"] .legend-color.vacation {
+    background: linear-gradient(135deg, #ed64a6 0%, #f093c0 100%);
 }
 
 /* Calendar Grid */
@@ -223,18 +231,23 @@
     color: #6c757d;
 }
 
-[data-theme="light"] .calendar-day.light {
-    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-    color: #1565c0;
-}
-
 [data-theme="light"] .calendar-day.normal {
     background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
     color: white;
 }
 
-[data-theme="light"] .calendar-day.heavy {
+[data-theme="light"] .calendar-day.sick {
+    background: linear-gradient(135deg, #2196f3 0%, #42a5f5 100%);
+    color: white;
+}
+
+[data-theme="light"] .calendar-day.overtime {
     background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+    color: white;
+}
+
+[data-theme="light"] .calendar-day.vacation {
+    background: linear-gradient(135deg, #e91e63 0%, #f06292 100%);
     color: white;
 }
 
@@ -250,18 +263,23 @@
     color: #a0aec0;
 }
 
-[data-theme="dark"] .calendar-day.light {
-    background: linear-gradient(135deg, #4299e1 0%, #63b3ed 100%);
-    color: #1a202c;
-}
-
 [data-theme="dark"] .calendar-day.normal {
     background: linear-gradient(135deg, #48bb78 0%, #68d391 100%);
     color: #1a202c;
 }
 
-[data-theme="dark"] .calendar-day.heavy {
+[data-theme="dark"] .calendar-day.sick {
+    background: linear-gradient(135deg, #4299e1 0%, #63b3ed 100%);
+    color: #1a202c;
+}
+
+[data-theme="dark"] .calendar-day.overtime {
     background: linear-gradient(135deg, #ed8936 0%, #f6ad55 100%);
+    color: #1a202c;
+}
+
+[data-theme="dark"] .calendar-day.vacation {
+    background: linear-gradient(135deg, #ed64a6 0%, #f093c0 100%);
     color: #1a202c;
 }
 
@@ -352,6 +370,8 @@
     display: flex;
     justify-content: flex-start;
     margin-bottom: 2rem;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .btn {

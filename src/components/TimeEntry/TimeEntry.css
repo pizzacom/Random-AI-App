@@ -260,3 +260,46 @@
         justify-content: flex-start;
     }
 }
+
+/* Dummy Entry Styles */
+.dummy-entry {
+    border-left-width: 6px;
+    background: var(--card-bg);
+    opacity: 0.9;
+}
+
+.dummy-entry.vacation-entry {
+    border-left-color: #e91e63;
+    background: linear-gradient(135deg, rgba(233, 30, 99, 0.1) 0%, rgba(240, 98, 146, 0.05) 100%);
+}
+
+.dummy-entry.sick-entry {
+    border-left-color: #2196f3;
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(66, 165, 245, 0.05) 100%);
+}
+
+.dummy-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+.vacation-entry .dummy-indicator {
+    color: #e91e63;
+}
+
+.sick-entry .dummy-indicator {
+    color: #2196f3;
+}
+
+/* Dark theme adjustments for dummy entries */
+[data-theme="dark"] .dummy-entry.vacation-entry {
+    background: linear-gradient(135deg, rgba(237, 100, 166, 0.15) 0%, rgba(240, 147, 192, 0.08) 100%);
+}
+
+[data-theme="dark"] .dummy-entry.sick-entry {
+    background: linear-gradient(135deg, rgba(66, 153, 225, 0.15) 0%, rgba(99, 179, 237, 0.08) 100%);
+}

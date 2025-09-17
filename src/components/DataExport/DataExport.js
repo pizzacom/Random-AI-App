@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useTimeEntries } from '../../hooks/useTimeEntries';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 import {
     exportToCSV,
     exportToJSON,
@@ -15,6 +16,8 @@ import './DataExport.css';
 const DataExport = () => {
     const { t } = useLanguage();
     const { timeEntries, addTimeEntry, setTimeEntries } = useTimeEntries();
+    const [vacationDays, setVacationDays] = useLocalStorage('vacationDays', []);
+    const [sickDays, setSickDays] = useLocalStorage('sickDays', []);
     const [importing, setImporting] = useState(false);
     const [importMessage, setImportMessage] = useState('');
     const [importType, setImportType] = useState('merge'); // 'merge' or 'replace'
@@ -25,7 +28,7 @@ const DataExport = () => {
      */
     const handleExportCSV = () => {
         try {
-            const csvContent = exportToCSV(timeEntries);
+            const csvContent = exportToCSV(timeEntries, vacationDays, sickDays);
             const filename = `zeit-tracking-export-${new Date().toISOString().split('T')[0]}.csv`;
             downloadCSV(csvContent, filename);
             setImportMessage(t('csvExported'));
@@ -43,9 +46,11 @@ const DataExport = () => {
         try {
             const metadata = {
                 totalEntries: timeEntries.length,
+                totalVacationDays: vacationDays.length,
+                totalSickDays: sickDays.length,
                 dateRange: getDateRange(timeEntries)
             };
-            const jsonContent = exportToJSON(timeEntries, metadata);
+            const jsonContent = exportToJSON(timeEntries, metadata, vacationDays, sickDays);
             const filename = `zeit-tracking-backup-${new Date().toISOString().split('T')[0]}.json`;
             downloadJSON(jsonContent, filename);
             setImportMessage(t('jsonExported'));
@@ -68,18 +73,20 @@ const DataExport = () => {
 
         try {
             const content = await readFileContent(file);
-            let importedEntries = [];
+            let importData = {};
 
             // Determine file type and parse accordingly
             if (file.name.toLowerCase().endsWith('.csv')) {
-                importedEntries = importFromCSV(content);
+                importData = importFromCSV(content);
             } else if (file.name.toLowerCase().endsWith('.json')) {
-                importedEntries = importFromJSON(content);
+                importData = importFromJSON(content);
             } else {
                 throw new Error(t('unsupportedFile'));
             }
 
-            if (importedEntries.length === 0) {
+            const { timeEntries: importedEntries, vacationDays: importedVacationDays, sickDays: importedSickDays } = importData;
+
+            if (importedEntries.length === 0 && importedVacationDays.length === 0 && importedSickDays.length === 0) {
                 setImportMessage(t('noValidEntries'));
                 return;
             }
@@ -87,9 +94,12 @@ const DataExport = () => {
             // Apply import based on type
             if (importType === 'replace') {
                 setTimeEntries(importedEntries);
-                setImportMessage(t('dataReplaced', { count: importedEntries.length }));
+                setVacationDays(importedVacationDays);
+                setSickDays(importedSickDays);
+                const totalImported = importedEntries.length + importedVacationDays.length + importedSickDays.length;
+                setImportMessage(t('dataReplaced', { count: totalImported }));
             } else {
-                // Merge mode: avoid duplicates based on date + start time + end time
+                // Merge mode: avoid duplicates
                 const existingEntries = timeEntries;
                 const newEntries = importedEntries.filter(importedEntry => {
                     return !existingEntries.some(existing =>
@@ -99,14 +109,29 @@ const DataExport = () => {
                     );
                 });
 
-                if (newEntries.length === 0) {
+                // Merge vacation days (avoid duplicates)
+                const newVacationDays = importedVacationDays.filter(date => !vacationDays.includes(date));
+                const newSickDays = importedSickDays.filter(date => !sickDays.includes(date));
+
+                const totalNew = newEntries.length + newVacationDays.length + newSickDays.length;
+
+                if (totalNew === 0) {
                     setImportMessage(t('noNewEntries'));
                 } else {
                     newEntries.forEach(entry => {
                         // Generate new ID for merged entries
                         addTimeEntry({ ...entry, id: undefined });
                     });
-                    setImportMessage(t('dataMerged', { count: newEntries.length }));
+
+                    // Add new vacation and sick days
+                    if (newVacationDays.length > 0) {
+                        setVacationDays([...vacationDays, ...newVacationDays]);
+                    }
+                    if (newSickDays.length > 0) {
+                        setSickDays([...sickDays, ...newSickDays]);
+                    }
+
+                    setImportMessage(t('dataMerged', { count: totalNew }));
                 }
             }
 
@@ -146,18 +171,18 @@ const DataExport = () => {
                     <button
                         onClick={handleExportCSV}
                         className="export-btn csv-btn"
-                        disabled={timeEntries.length === 0}
+                        disabled={timeEntries.length === 0 && vacationDays.length === 0 && sickDays.length === 0}
                     >
                         📄 {t('exportCsv')}
                         <span className="btn-description">
-                            {t('csvDescription')} ({timeEntries.length} {t('entries')})
+                            {t('csvDescription')}
                         </span>
                     </button>
 
                     <button
                         onClick={handleExportJSON}
                         className="export-btn json-btn"
-                        disabled={timeEntries.length === 0}
+                        disabled={timeEntries.length === 0 && vacationDays.length === 0 && sickDays.length === 0}
                     >
                         🗃️ {t('exportJson')}
                         <span className="btn-description">
@@ -166,7 +191,7 @@ const DataExport = () => {
                     </button>
                 </div>
 
-                {timeEntries.length === 0 && (
+                {timeEntries.length === 0 && vacationDays.length === 0 && sickDays.length === 0 && (
                     <p className="no-data-message">
                         ℹ️ {t('noDataToExport')}
                     </p>

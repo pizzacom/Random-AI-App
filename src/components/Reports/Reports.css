@@ -346,11 +346,11 @@
 
 .summary-stats {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.5rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
     margin-bottom: 2rem;
     width: 100%;
-    max-width: 450px;
+    max-width: 600px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -551,6 +551,27 @@
 .entry-description {
     color: var(--text-secondary);
     font-style: italic;
+}
+
+/* Dummy entry styles for vacation/sick days */
+.entry-row.dummy-entry {
+    background: rgba(var(--primary-color), 0.05);
+    border-left: 4px solid var(--primary-color);
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 1.5rem;
+    font-weight: 600;
+}
+
+.entry-row.dummy-entry .entry-time {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+}
+
+.entry-row.dummy-entry .entry-description {
+    color: var(--primary-color);
+    font-weight: 600;
+    font-style: normal;
 }
 
 /* Mobile responsiveness */

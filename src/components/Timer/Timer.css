@@ -217,3 +217,29 @@
         max-width: 200px;
     }
 }
+
+/* Fixed Message Area - prevents layout shifting */
+.timer-message-area {
+    min-height: 3rem;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.timer-message-area .timer-restored-message {
+    margin: 0;
+    animation: slideUpFade 0.5s ease-out;
+}
+
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

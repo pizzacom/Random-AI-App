@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, getDaysInMonth, startOfMonth, addDays } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { formatMinutesToHours, formatMinutesToTime, calculateTotalHours } from './timeCalculations';
 
@@ -9,8 +9,10 @@ import { formatMinutesToHours, formatMinutesToTime, calculateTotalHours } from '
  * @param {Array} timeEntries - Array of time entry objects for the month
  * @param {string} month - Month in YYYY-MM format
  * @param {object} userInfo - User information for header
+ * @param {Array} vacationDays - Array of vacation dates in YYYY-MM-DD format
+ * @param {Array} sickDays - Array of sick days in YYYY-MM-DD format
  */
-export const generateMonthlyReport = (timeEntries, month, userInfo = {}) => {
+export const generateMonthlyReport = (timeEntries, month, userInfo = {}, vacationDays = [], sickDays = []) => {
     const doc = new jsPDF();
 
     // Set document properties
@@ -21,119 +23,223 @@ export const generateMonthlyReport = (timeEntries, month, userInfo = {}) => {
         creator: 'Zeit Tracking App'
     });
 
-    // Header
-    doc.setFontSize(20);
+    // Modern header with subtle styling
+    doc.setFontSize(24);
+    doc.setTextColor(40, 40, 40);
     doc.text('Zeiterfassung', 20, 25);
 
-    doc.setFontSize(12);
+    // Add a subtle line under header
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.5);
+    doc.line(20, 28, 190, 28);
+
+    // Month and user information in a more compact layout
+    doc.setFontSize(14);
+    doc.setTextColor(60, 60, 60);
     const monthName = format(parseISO(`${month}-01`), 'MMMM yyyy', { locale: de });
-    doc.text(`Monat: ${monthName}`, 20, 35);
+    doc.text(monthName, 20, 35);
 
-    if (userInfo.name) {
-        doc.text(`Name: ${userInfo.name}`, 20, 45);
+    // User info on same line if available - more compact
+    if (userInfo.name || userInfo.company) {
+        doc.setFontSize(10);
+        doc.setTextColor(80, 80, 80);
+        const userInfoParts = [];
+        if (userInfo.name) userInfoParts.push(userInfo.name);
+        if (userInfo.company) userInfoParts.push(userInfo.company);
+        const userInfoText = userInfoParts.join(' • ');
+        doc.text(userInfoText, 130, 35);
     }
-    if (userInfo.company) {
-        doc.text(`Firma: ${userInfo.company}`, 20, 55);
+
+    // Generate complete month data including empty days
+    const [year, monthNum] = month.split('-');
+    const daysInMonth = getDaysInMonth(new Date(year, monthNum - 1));
+    const monthStart = startOfMonth(new Date(year, monthNum - 1));
+
+    // Create entry map for quick lookup
+    const entryMap = {};
+    timeEntries.forEach(entry => {
+        entryMap[entry.date] = entry;
+    });
+
+    // Generate table data for all days of the month
+    const tableData = [];
+    for (let day = 1; day <= daysInMonth; day++) {
+        const currentDate = addDays(monthStart, day - 1);
+        const dateString = format(currentDate, 'yyyy-MM-dd');
+        const entry = entryMap[dateString];
+
+        let rowData;
+        if (vacationDays.includes(dateString)) {
+            // Vacation day
+            rowData = [
+                format(currentDate, 'dd.MM', { locale: de }),
+                format(currentDate, 'EE', { locale: de }),
+                '–',
+                '–',
+                '–',
+                '–',
+                '–',
+                'Urlaub'
+            ];
+        } else if (sickDays.includes(dateString)) {
+            // Sick day
+            rowData = [
+                format(currentDate, 'dd.MM', { locale: de }),
+                format(currentDate, 'EE', { locale: de }),
+                '–',
+                '–',
+                '–',
+                '–',
+                '–',
+                'Krank'
+            ];
+        } else if (entry) {
+            // Regular work day with entry
+            rowData = [
+                format(currentDate, 'dd.MM', { locale: de }),
+                format(currentDate, 'EE', { locale: de }),
+                entry.startTime || '–',
+                entry.endTime || '–',
+                formatMinutesToTime(entry.breakDuration || 0),
+                formatMinutesToTime(entry.duration || 0),
+                formatMinutesToTime((entry.duration || 0) - (entry.breakDuration || 0)),
+                entry.description || '–'
+            ];
+        } else {
+            // Empty day
+            rowData = [
+                format(currentDate, 'dd.MM', { locale: de }),
+                format(currentDate, 'EE', { locale: de }),
+                '–',
+                '–',
+                '–',
+                '–',
+                '–',
+                '–'
+            ];
+        }
+
+        tableData.push(rowData);
     }
 
-    // Prepare table data
-    const tableData = timeEntries.map(entry => [
-        format(parseISO(entry.date), 'dd.MM.yyyy', { locale: de }),
-        format(parseISO(entry.date), 'EEEE', { locale: de }),
-        entry.startTime || '-',
-        entry.endTime || '-',
-        formatMinutesToTime(entry.breakDuration || 0),
-        formatMinutesToTime(entry.duration || 0),
-        formatMinutesToHours(entry.duration - (entry.breakDuration || 0)),
-        entry.description || ''
-    ]);
-
-    // Calculate totals
+    // Calculate totals only from actual work entries
     const totals = calculateTotalHours(timeEntries);
+    const monthVacationDays = vacationDays.filter(date => date.startsWith(month));
+    const monthSickDays = sickDays.filter(date => date.startsWith(month));
 
-    // Add total row
+    // Add summary row with proper formatting
     tableData.push([
-        'Gesamt',
+        'Summe',
         '',
         '',
         '',
         formatMinutesToTime(totals.totalBreaks),
         formatMinutesToTime(totals.totalDuration),
-        formatMinutesToHours(totals.netTime),
-        ''
+        formatMinutesToTime(totals.netTime),
+        `${timeEntries.length}T • ${monthVacationDays.length}U • ${monthSickDays.length}K`
     ]);
 
-    // Table configuration
+    // Modern table configuration with minimal design - more compact
     const tableConfig = {
-        startY: userInfo.company ? 65 : 55,
+        startY: 45,
         head: [[
             'Datum',
-            'Wochentag',
-            'Beginn',
-            'Ende',
+            'Tag',
+            'Von',
+            'Bis',
             'Pause',
             'Gesamt',
-            'Arbeitszeit (h)',
+            'Arbeit',
             'Beschreibung'
         ]],
         body: tableData,
         styles: {
-            fontSize: 10,
-            cellPadding: 3,
+            fontSize: 7,
+            cellPadding: 1.5,
+            textColor: [40, 40, 40],
+            lineColor: [220, 220, 220],
+            lineWidth: 0.1
         },
         headStyles: {
-            fillColor: [66, 139, 202],
-            textColor: 255,
-            fontSize: 10,
-            fontStyle: 'bold'
+            fillColor: [250, 250, 250],
+            textColor: [40, 40, 40],
+            fontSize: 8,
+            fontStyle: 'bold',
+            lineColor: [180, 180, 180],
+            lineWidth: 0.3,
+            cellPadding: 2
         },
         alternateRowStyles: {
-            fillColor: [245, 245, 245]
+            fillColor: [252, 252, 252]
         },
         columnStyles: {
-            0: { cellWidth: 25 }, // Datum
-            1: { cellWidth: 25 }, // Wochentag
-            2: { cellWidth: 20 }, // Beginn
-            3: { cellWidth: 20 }, // Ende
-            4: { cellWidth: 20 }, // Pause
-            5: { cellWidth: 20 }, // Gesamt
-            6: { cellWidth: 25 }, // Arbeitszeit
-            7: { cellWidth: 35 }  // Beschreibung
+            0: { cellWidth: 16, halign: 'center' }, // Datum
+            1: { cellWidth: 14, halign: 'center' }, // Tag
+            2: { cellWidth: 14, halign: 'center' }, // Von
+            3: { cellWidth: 14, halign: 'center' }, // Bis
+            4: { cellWidth: 14, halign: 'center' }, // Pause
+            5: { cellWidth: 16, halign: 'center' }, // Gesamt
+            6: { cellWidth: 16, halign: 'center' }, // Arbeit
+            7: { cellWidth: 50, halign: 'left' }    // Beschreibung
         },
         didParseCell: function (data) {
-            // Style the total row
-            if (data.row.index === tableData.length - 1) {
+            const rowIndex = data.row.index;
+            const isLastRow = rowIndex === tableData.length - 1;
+            const isVacation = data.row.raw[7] === 'Urlaub';
+            const isSick = data.row.raw[7] === 'Krank';
+            const isWeekend = ['Sa', 'So'].includes(data.row.raw[1]);
+
+            if (isLastRow) {
+                // Summary row styling
                 data.cell.styles.fontStyle = 'bold';
-                data.cell.styles.fillColor = [220, 220, 220];
+                data.cell.styles.fillColor = [240, 240, 240];
+                data.cell.styles.textColor = [40, 40, 40];
+                data.cell.styles.lineWidth = 0.5;
+                data.cell.styles.lineColor = [160, 160, 160];
+            } else if (isVacation) {
+                // Vacation day - very light blue
+                data.cell.styles.fillColor = [248, 252, 255];
+                data.cell.styles.textColor = [70, 130, 180];
+            } else if (isSick) {
+                // Sick day - very light red
+                data.cell.styles.fillColor = [255, 248, 248];
+                data.cell.styles.textColor = [180, 70, 70];
+            } else if (isWeekend) {
+                // Weekend - very light gray
+                data.cell.styles.fillColor = [248, 248, 248];
+                data.cell.styles.textColor = [120, 120, 120];
             }
-        }
+        },
+        margin: { left: 20, right: 20 },
+        tableWidth: 'auto'
     };
 
     // Generate table
     autoTable(doc, tableConfig);
 
-    // Add summary section
-    const finalY = doc.lastAutoTable.finalY + 20;
+    // Compact summary section at bottom
+    const finalY = doc.lastAutoTable.finalY + 8;
 
-    doc.setFontSize(12);
-    doc.text('Zusammenfassung:', 20, finalY);
+    // Summary in a more compact, horizontal layout
+    doc.setFontSize(9);
+    doc.setTextColor(60, 60, 60);
 
-    doc.setFontSize(10);
-    doc.text(`Gesamte Arbeitszeit: ${formatMinutesToHours(totals.netTime)} Stunden`, 20, finalY + 10);
-    doc.text(`Gesamte Pausenzeit: ${formatMinutesToHours(totals.totalBreaks)} Stunden`, 20, finalY + 20);
-    doc.text(`Arbeitstage: ${timeEntries.filter(entry => entry.duration > 0).length}`, 20, finalY + 30);
+    const summaryItems = [
+        `Arbeitszeit: ${formatMinutesToTime(totals.netTime)}`,
+        `Pausen: ${formatMinutesToTime(totals.totalBreaks)}`,
+        `Arbeitstage: ${timeEntries.length}`,
+        `Urlaub: ${monthVacationDays.length}`,
+        `Krank: ${monthSickDays.length}`
+    ];
 
-    // Footer
-    const pageCount = doc.internal.getNumberOfPages();
-    for (let i = 1; i <= pageCount; i++) {
-        doc.setPage(i);
-        doc.setFontSize(8);
-        doc.text(
-            `Erstellt am ${format(new Date(), 'dd.MM.yyyy HH:mm', { locale: de })} - Seite ${i} von ${pageCount}`,
-            20,
-            doc.internal.pageSize.height - 10
-        );
-    }
+    const summaryText = summaryItems.join('  •  ');
+    doc.text(summaryText, 20, finalY);
+
+    // Modern footer with minimal design
+    doc.setFontSize(7);
+    doc.setTextColor(120, 120, 120);
+    const footerText = `Erstellt am ${format(new Date(), 'dd.MM.yyyy', { locale: de })}`;
+    doc.text(footerText, 20, doc.internal.pageSize.height - 8);
 
     return doc;
 };
@@ -152,9 +258,11 @@ export const downloadPDF = (doc, filename) => {
  * @param {Array} timeEntries - Time entries for the month
  * @param {string} month - Month in YYYY-MM format
  * @param {object} userInfo - User information
+ * @param {Array} vacationDays - Array of vacation dates
+ * @param {Array} sickDays - Array of sick days
  */
-export const generateAndDownloadReport = (timeEntries, month, userInfo = {}) => {
-    const doc = generateMonthlyReport(timeEntries, month, userInfo);
+export const generateAndDownloadReport = (timeEntries, month, userInfo = {}, vacationDays = [], sickDays = []) => {
+    const doc = generateMonthlyReport(timeEntries, month, userInfo, vacationDays, sickDays);
     const filename = `Zeiterfassung_${month.replace('-', '_')}.pdf`;
     downloadPDF(doc, filename);
 };

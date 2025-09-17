@@ -154,6 +154,8 @@ body {
     right: 1rem;
     top: 50%;
     transform: translateY(-50%);
+    z-index: 1100;
+    /* Higher than settings overlay */
 }
 
 .nav-button {
@@ -192,6 +194,62 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 2rem;
+}
+
+/* Tab Switching Animations */
+.tab-container {
+    transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    will-change: transform;
+}
+
+.tab-container.sliding-next {
+    animation: slideTabNext 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.tab-container.sliding-prev {
+    animation: slideTabPrev 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+@keyframes slideTabNext {
+    0% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(-30px);
+        opacity: 0.7;
+    }
+
+    51% {
+        transform: translateX(30px);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideTabPrev {
+    0% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(30px);
+        opacity: 0.7;
+    }
+
+    51% {
+        transform: translateX(-30px);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
 /* Footer Styles */

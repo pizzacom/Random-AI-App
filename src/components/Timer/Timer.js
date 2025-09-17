@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useTimer } from '../../hooks/useTimer';
 import { useTimeEntries } from '../../hooks/useTimeEntries';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 import './Timer.css';
 
 const Timer = () => {
     const { t, currentLanguage } = useLanguage();
+    const [defaultBreakLength] = useLocalStorage('defaultBreakLength', 30);
     const {
         isRunning,
         startTime,
@@ -20,8 +22,15 @@ const Timer = () => {
 
     const { addTimeEntry } = useTimeEntries();
     const [timerDescription, setTimerDescription] = useState('');
-    const [breakDuration, setBreakDuration] = useState(0);
+    const [breakDuration, setBreakDuration] = useState(defaultBreakLength);
     const [showRestoredMessage, setShowRestoredMessage] = useState(false);
+
+    // Update break duration when default changes
+    useEffect(() => {
+        if (!isRunning) {
+            setBreakDuration(defaultBreakLength);
+        }
+    }, [defaultBreakLength, isRunning]);
 
     // Check if timer was restored on page load
     useEffect(() => {
@@ -96,13 +105,6 @@ const Timer = () => {
 
     return (
         <div className="timer-container">
-            {/* Timer Restored Notification */}
-            {showRestoredMessage && (
-                <div className="timer-restored-message">
-                    ✅ {t('timerRestored')} {startTime}
-                </div>
-            )}
-
             {/* Digital Clock Display */}
             <div className="digital-clock">
                 <div className="current-time">
@@ -184,6 +186,15 @@ const Timer = () => {
                 >
                     🔄 {t('resetTimer')}
                 </button>
+            </div>
+
+            {/* Timer Restored Notification - Fixed Position */}
+            <div className="timer-message-area">
+                {showRestoredMessage && (
+                    <div className="timer-restored-message">
+                        ✅ {t('timerRestored')} {startTime}
+                    </div>
+                )}
             </div>
         </div>
     );

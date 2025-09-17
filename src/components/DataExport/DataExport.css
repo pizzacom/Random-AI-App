@@ -1,11 +1,13 @@
 /* DataExport Component Styles */
 .data-export {
-    background: var(--background-color);
+    background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 1.5rem;
     margin: 1rem auto;
     max-width: 600px;
+    box-shadow: 0 4px 6px var(--shadow);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .data-export h3 {
@@ -14,6 +16,7 @@
     font-size: 1.3rem;
     border-bottom: 2px solid var(--border-color);
     padding-bottom: 0.5rem;
+    transition: color 0.3s ease;
 }
 
 .data-export h4 {
@@ -75,30 +78,39 @@
 
 .csv-btn {
     border-color: #28a745;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
 }
 
 .csv-btn:hover:not(:disabled) {
     border-color: #28a745;
-    background: #28a74510;
+    background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3);
 }
 
 .json-btn {
     border-color: #007bff;
+    background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+    color: white;
 }
 
 .json-btn:hover:not(:disabled) {
     border-color: #007bff;
-    background: #007bff10;
+    background: linear-gradient(135deg, #6610f2 0%, #007bff 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 123, 255, 0.3);
 }
 
 .no-data-message {
     color: var(--text-secondary);
     font-style: italic;
     margin-top: 1rem;
-    padding: 0.75rem;
-    background: var(--info-background);
-    border-radius: 6px;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--info-background) 0%, rgba(23, 162, 184, 0.1) 100%);
+    border-radius: 8px;
     border-left: 4px solid var(--info-color);
+    box-shadow: 0 2px 4px var(--shadow);
 }
 
 /* Import Section */
@@ -121,13 +133,16 @@
     cursor: pointer;
     padding: 0.75rem;
     border: 1px solid var(--border-color);
-    border-radius: 6px;
-    transition: all 0.2s ease;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    background: var(--card-bg);
 }
 
 .import-type-label:hover {
-    background: var(--hover-color);
+    background: linear-gradient(135deg, var(--hover-color) 0%, rgba(0, 123, 255, 0.05) 100%);
     border-color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px var(--shadow);
 }
 
 .import-type-label input[type="radio"] {
@@ -147,8 +162,9 @@
 }
 
 .import-type-label:has(input:checked) {
-    background: var(--primary-background);
+    background: linear-gradient(135deg, var(--primary-background) 0%, rgba(0, 123, 255, 0.1) 100%);
     border-color: var(--primary-color);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
 }
 
 /* File Input */
@@ -163,20 +179,21 @@
 .file-input-label {
     display: inline-block;
     padding: 0.75rem 1.5rem;
-    background: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color) 0%, #6610f2 100%);
     color: white;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 600;
     text-align: center;
     min-width: 200px;
+    box-shadow: 0 2px 4px var(--shadow);
 }
 
 .file-input-label:hover {
-    background: var(--primary-hover);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px var(--shadow-color);
+    background: linear-gradient(135deg, #6610f2 0%, var(--primary-color) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
 }
 
 .file-input:disabled+.file-input-label {
@@ -189,11 +206,12 @@
 
 /* Import Info */
 .import-info {
-    background: var(--info-background);
+    background: linear-gradient(135deg, var(--info-background) 0%, rgba(23, 162, 184, 0.05) 100%);
     border: 1px solid var(--info-color);
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 1rem;
     margin-bottom: 1rem;
+    box-shadow: 0 2px 4px var(--shadow);
 }
 
 .import-info p {
@@ -219,27 +237,28 @@
 /* Status Messages */
 .import-message {
     padding: 0.75rem 1rem;
-    border-radius: 6px;
+    border-radius: 8px;
     margin-top: 1rem;
     font-weight: 600;
     border-left: 4px solid;
     animation: slideIn 0.3s ease;
+    box-shadow: 0 2px 8px var(--shadow);
 }
 
 .import-message.success {
-    background: var(--success-background);
+    background: linear-gradient(135deg, var(--success-background) 0%, rgba(39, 174, 96, 0.1) 100%);
     color: var(--success-text);
     border-left-color: var(--success-color);
 }
 
 .import-message.error {
-    background: var(--error-background);
+    background: linear-gradient(135deg, var(--error-background) 0%, rgba(231, 76, 60, 0.1) 100%);
     color: var(--error-text);
     border-left-color: var(--error-color);
 }
 
 .import-message.warning {
-    background: var(--warning-background);
+    background: linear-gradient(135deg, var(--warning-background) 0%, rgba(243, 156, 18, 0.1) 100%);
     color: var(--warning-text);
     border-left-color: var(--warning-color);
 }

@@ -80,6 +80,20 @@ const TimeEntry = ({ entry, onUpdate, onDelete, isEditing, onEdit, onCancelEdit 
 
     const netTime = (entry.duration || 0) - (entry.breakDuration || 0);
 
+    // Handle dummy entries (vacation/sick days)
+    if (entry.isDummy) {
+        return (
+            <div className={`time-entry dummy-entry ${entry.isVacation ? 'vacation-entry' : 'sick-entry'}`}>
+                <div className="time-entry-header">
+                    <h4>{formatDateGerman(entry.date, 'EEEE, dd.MM.yyyy')}</h4>
+                    <div className="dummy-indicator">
+                        {entry.isVacation ? '🏖️' : '🤒'} {entry.description}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     if (isEditing) {
         return (
             <div className="time-entry editing">
