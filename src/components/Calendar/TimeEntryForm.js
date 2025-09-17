@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { getCurrentTime, isValidTime, isValidTimeRange } from '../../utils/timeCalculations';
+import CustomTimePicker from '../TimeEntry/CustomTimePicker';
 import './TimeEntryForm.css';
 
 const TimeEntryForm = ({ onSave, onCancel, initialData = {} }) => {
+    const { t } = useLanguage();
     const [formData, setFormData] = useState({
         startTime: initialData.startTime || '',
         endTime: initialData.endTime || '',
@@ -15,19 +18,19 @@ const TimeEntryForm = ({ onSave, onCancel, initialData = {} }) => {
         const newErrors = {};
 
         if (!formData.startTime) {
-            newErrors.startTime = 'Startzeit ist erforderlich';
+            newErrors.startTime = t('startTimeRequired');
         } else if (!isValidTime(formData.startTime)) {
-            newErrors.startTime = 'Ungültige Startzeit';
+            newErrors.startTime = t('invalidStartTime');
         }
 
         if (!formData.endTime) {
-            newErrors.endTime = 'Endzeit ist erforderlich';
+            newErrors.endTime = t('endTimeRequired');
         } else if (!isValidTime(formData.endTime)) {
-            newErrors.endTime = 'Ungültige Endzeit';
+            newErrors.endTime = t('invalidEndTime');
         }
 
         if (formData.startTime && formData.endTime && !isValidTimeRange(formData.startTime, formData.endTime)) {
-            newErrors.timeRange = 'Endzeit muss nach Startzeit liegen';
+            newErrors.timeRange = t('endTimeAfterStart');
         }
 
         if (formData.breakDuration < 0) {
@@ -69,11 +72,10 @@ const TimeEntryForm = ({ onSave, onCancel, initialData = {} }) => {
                     <div className="form-group">
                         <label htmlFor="startTime">Startzeit *:</label>
                         <div className="input-with-button">
-                            <input
-                                type="time"
+                            <CustomTimePicker
                                 id="startTime"
                                 value={formData.startTime}
-                                onChange={(e) => handleInputChange('startTime', e.target.value)}
+                                onChange={(value) => handleInputChange('startTime', value)}
                                 className={errors.startTime ? 'error' : ''}
                                 required
                             />
@@ -92,11 +94,10 @@ const TimeEntryForm = ({ onSave, onCancel, initialData = {} }) => {
                     <div className="form-group">
                         <label htmlFor="endTime">Endzeit *:</label>
                         <div className="input-with-button">
-                            <input
-                                type="time"
+                            <CustomTimePicker
                                 id="endTime"
                                 value={formData.endTime}
-                                onChange={(e) => handleInputChange('endTime', e.target.value)}
+                                onChange={(value) => handleInputChange('endTime', value)}
                                 className={errors.endTime ? 'error' : ''}
                                 required
                             />

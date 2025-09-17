@@ -138,6 +138,7 @@ export const useTimeEntries = () => {
 
     return {
         timeEntries,
+        setTimeEntries,
         addTimeEntry,
         updateTimeEntry,
         deleteTimeEntry,

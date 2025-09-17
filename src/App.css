@@ -1,3 +1,98 @@
+/* CSS Variables for theming */
+:root {
+    --primary-color: #007bff;
+    --primary-dark: #0056b3;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+}
+
+/* Light theme */
+[data-theme="light"] {
+    --bg-color: #f8f9fa;
+    --bg-secondary: #ffffff;
+    --text-color: #495057;
+    --text-color-secondary: #6c757d;
+    --text-secondary: #6c757d;
+    --text-muted: #6c757d;
+    --border-color: #dee2e6;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --shadow-light: rgba(0, 0, 0, 0.05);
+    --card-bg: #ffffff;
+    --hover-bg: #f8f9fa;
+    --input-bg: #ffffff;
+    --input-background: #ffffff;
+    --input-border: #ced4da;
+    --btn-bg: #007bff;
+    --btn-hover: #0056b3;
+
+    /* Additional light mode variables */
+    --btn-secondary: #6c757d;
+    --btn-secondary-hover: #545b62;
+    --btn-danger: #dc3545;
+    --btn-danger-hover: #c82333;
+    --btn-success: #28a745;
+    --btn-success-hover: #218838;
+
+    /* Color variables for components */
+    --error-color: #dc3545;
+    --error-hover: #c82333;
+    --success-hover: #218838;
+    --secondary-hover: #545b62;
+    --primary-color-alpha: rgba(0, 123, 255, 0.1);
+    --placeholder-color: #6c757d;
+
+    /* Scrollbar variables */
+    --scrollbar-width: 8px;
+    --scrollbar-track: var(--hover-bg);
+    --scrollbar-thumb: var(--border-color);
+    --scrollbar-thumb-hover: var(--primary-color);
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+    --bg-color: #1a1d23;
+    --bg-secondary: #2d3748;
+    --text-color: #e2e8f0;
+    --text-color-secondary: #a0aec0;
+    --text-secondary: #a0aec0;
+    --text-muted: #a0aec0;
+    --border-color: #4a5568;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --shadow-light: rgba(0, 0, 0, 0.2);
+    --card-bg: #2d3748;
+    --hover-bg: #4a5568;
+    --input-bg: #4a5568;
+    --input-background: #4a5568;
+    --input-border: #718096;
+    --btn-bg: #3182ce;
+    --btn-hover: #2c5aa0;
+
+    /* Additional dark mode variables */
+    --btn-secondary: #4a5568;
+    --btn-secondary-hover: #2d3748;
+    --btn-danger: #e53e3e;
+    --btn-danger-hover: #c53030;
+    --btn-success: #38a169;
+    --btn-success-hover: #2f855a;
+
+    /* Color variables for components */
+    --error-color: #e53e3e;
+    --error-hover: #c53030;
+    --success-hover: #2f855a;
+    --secondary-hover: #2d3748;
+    --primary-color-alpha: rgba(49, 130, 206, 0.1);
+    --placeholder-color: #a0aec0;
+
+    /* Scrollbar variables for dark mode */
+    --scrollbar-width: 8px;
+    --scrollbar-track: var(--bg-secondary);
+    --scrollbar-thumb: var(--border-color);
+    --scrollbar-thumb-hover: var(--primary-color);
+}
+
 /* Global Styles */
 * {
     margin: 0;
@@ -11,9 +106,10 @@ body {
         sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #f8f9fa;
-    color: #495057;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .app {
@@ -22,43 +118,17 @@ body {
     flex-direction: column;
 }
 
-/* Header Styles */
-.app-header {
-    background: linear-gradient(135deg, #007bff, #0056b3);
-    color: white;
-    padding: 2rem 0;
-    text-align: center;
-    box-shadow: 0 2px 10px rgba(0, 123, 255, 0.3);
-}
-
-.header-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-}
-
-.app-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    letter-spacing: -0.5px;
-}
-
-.app-header p {
-    font-size: 1.1rem;
-    opacity: 0.9;
-    font-weight: 300;
-}
-
 /* Navigation Styles */
 .app-navigation {
-    background: white;
-    border-bottom: 1px solid #e9ecef;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
     padding: 0;
     position: sticky;
     top: 0;
     z-index: 100;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px var(--shadow-light);
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
 }
 
 .nav-content {
@@ -66,7 +136,24 @@ body {
     margin: 0 auto;
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 0;
+    width: 100%;
+}
+
+.nav-left {
+    display: flex;
+    gap: 0;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .nav-button {
@@ -76,28 +163,29 @@ body {
     font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
-    color: #6c757d;
+    color: var(--text-muted);
     transition: all 0.2s ease;
     border-bottom: 3px solid transparent;
     white-space: nowrap;
 }
 
 .nav-button:hover {
-    background-color: #f8f9fa;
-    color: #007bff;
+    background-color: var(--bg-color);
+    color: var(--primary-color);
 }
 
 .nav-button.active {
-    color: #007bff;
-    border-bottom-color: #007bff;
-    background-color: #f8f9fa;
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
+    background-color: var(--bg-color);
 }
 
 /* Main Content Styles */
 .app-main {
     flex: 1;
     padding: 2rem 0;
-    background-color: #f8f9fa;
+    background-color: var(--bg-color);
+    transition: background-color 0.3s ease;
 }
 
 .main-content {
@@ -108,11 +196,13 @@ body {
 
 /* Footer Styles */
 .app-footer {
-    background: #343a40;
-    color: #adb5bd;
+    background: var(--bg-secondary);
+    color: var(--text-muted);
     padding: 1.5rem 0;
     text-align: center;
     margin-top: auto;
+    border-top: 1px solid var(--border-color);
+    transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 .footer-content {
@@ -132,7 +222,7 @@ body {
 }
 
 .text-muted {
-    color: #6c757d;
+    color: var(--text-muted);
 }
 
 .mb-0 {
@@ -185,17 +275,6 @@ body {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .app-header {
-        padding: 1.5rem 0;
-    }
-
-    .app-header h1 {
-        font-size: 2rem;
-    }
-
-    .app-header p {
-        font-size: 1rem;
-    }
 
     .header-content,
     .main-content,
@@ -204,8 +283,31 @@ body {
     }
 
     .nav-content {
-        flex-direction: column;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1rem;
+        position: relative;
+    }
+
+    .nav-left {
+        display: flex;
         gap: 0;
+        flex: 1;
+        justify-content: center;
+        grid-column: unset;
+        justify-self: unset;
+    }
+
+    .nav-right {
+        position: relative;
+        right: auto;
+        top: auto;
+        transform: none;
+        flex-shrink: 0;
+        grid-column: unset;
+        justify-self: unset;
+        padding-right: 0;
     }
 
     .nav-button {
@@ -217,7 +319,7 @@ body {
 
     .nav-button.active {
         border-bottom: none;
-        border-right-color: #007bff;
+        border-right-color: var(--primary-color);
     }
 
     .app-main {
@@ -226,10 +328,6 @@ body {
 }
 
 @media (max-width: 480px) {
-    .app-header h1 {
-        font-size: 1.75rem;
-    }
-
     .nav-button {
         font-size: 0.9rem;
         padding: 0.75rem;
@@ -238,9 +336,6 @@ body {
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
-    .app-header {
-        background: #000;
-    }
 
     .nav-button:hover,
     .nav-button.active {
@@ -256,4 +351,285 @@ body {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
     }
+}
+
+/* ============================================================
+   CUSTOM SCROLLBARS
+   ============================================================ */
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+    height: var(--scrollbar-width);
+}
+
+::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+    border-radius: calc(var(--scrollbar-width) / 2);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: calc(var(--scrollbar-width) / 2);
+    transition: all 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+
+::-webkit-scrollbar-corner {
+    background: var(--scrollbar-track);
+}
+
+/* Enhanced scrollbars for specific components */
+.calendar-grid,
+.time-entries-list,
+.entries-list,
+.selected-day-section,
+.data-export,
+.reports-content,
+.entries-preview {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* Thin scrollbars for small containers */
+.day-entries,
+.calendar-day,
+.time-entry-form,
+.import-info {
+    scrollbar-width: thin;
+}
+
+/* Beautiful hover effect for scrollable areas */
+.time-entries-list::-webkit-scrollbar-thumb:hover,
+.entries-list::-webkit-scrollbar-thumb:hover,
+.calendar-grid::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+}
+
+/* Smooth scrolling for all containers */
+.calendar-grid,
+.time-entries-list,
+.entries-list,
+.selected-day-section,
+.reports-content,
+.data-export {
+    scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for calendar days container */
+.calendar-grid::-webkit-scrollbar {
+    width: 6px;
+}
+
+.calendar-grid::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, var(--scrollbar-thumb), var(--primary-color));
+    border-radius: 3px;
+}
+
+/* Enhanced scrollbars for time entry lists */
+.time-entries-list::-webkit-scrollbar,
+.entries-list::-webkit-scrollbar {
+    width: 10px;
+}
+
+.time-entries-list::-webkit-scrollbar-track,
+.entries-list::-webkit-scrollbar-track {
+    background: var(--card-bg);
+    border-radius: 5px;
+    margin: 4px;
+}
+
+.time-entries-list::-webkit-scrollbar-thumb,
+.entries-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--scrollbar-thumb), var(--scrollbar-thumb-hover));
+    border-radius: 5px;
+    border: 1px solid var(--scrollbar-track);
+}
+
+/* Mobile scrollbar optimization */
+@media (max-width: 768px) {
+    ::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+    }
+
+    .time-entries-list::-webkit-scrollbar,
+    .entries-list::-webkit-scrollbar {
+        width: 6px;
+    }
+}
+
+/* Time Input Fixes */
+/* Remove spinner arrows from time inputs to prevent scroll issues */
+input[type="time"]::-webkit-outer-spin-button,
+input[type="time"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="time"] {
+    background: var(--input-bg);
+    border: 2px solid var(--input-border);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    transition: all 0.2s ease;
+    min-width: 120px;
+    font-family: inherit;
+    -webkit-text-fill-color: var(--text-color);
+}
+
+input[type="time"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+input[type="time"]:hover {
+    border-color: var(--primary-color);
+}
+
+/* Time picker clock icon */
+input[type="time"]::-webkit-calendar-picker-indicator {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0 0 0 8px;
+    opacity: 1;
+    width: 18px;
+    height: 18px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23374151' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cpolyline points='12,6 12,12 16,14'%3E%3C/polyline%3E%3C/svg%3E");
+    background-size: 18px 18px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+/* Dark theme clock icon */
+[data-theme="dark"] input[type="time"]::-webkit-calendar-picker-indicator {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23e2e8f0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cpolyline points='12,6 12,12 16,14'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+/* Style the time picker dropdown */
+input[type="time"]::-webkit-datetime-edit {
+    color: var(--text-color) !important;
+    background: transparent !important;
+    border: none !important;
+}
+
+input[type="time"]::-webkit-datetime-edit-fields-wrapper {
+    color: var(--text-color) !important;
+    background: transparent !important;
+    border: none !important;
+}
+
+input[type="time"]::-webkit-datetime-edit-hour-field,
+input[type="time"]::-webkit-datetime-edit-minute-field {
+    color: var(--text-color) !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 2px;
+}
+
+input[type="time"]::-webkit-datetime-edit-text {
+    color: var(--text-color) !important;
+    background: transparent !important;
+}
+
+/* Additional styling for better appearance */
+input[type="time"]::-webkit-datetime-edit-hour-field:focus,
+input[type="time"]::-webkit-datetime-edit-minute-field:focus {
+    background: var(--hover-bg) !important;
+    border-radius: 3px !important;
+}
+
+/* Hover effects for time picker */
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 0.7;
+    transform: scale(1.1);
+}
+
+[data-theme="dark"] input[type="time"]::-webkit-calendar-picker-indicator {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23e2e8f0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cpolyline points='12,6 12,12 16,14'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 0.7;
+    transform: scale(1.1);
+}
+
+/* Fix text color in different states */
+input[type="time"]::-webkit-datetime-edit {
+    color: var(--text-color) !important;
+    background: transparent !important;
+}
+
+input[type="time"]::-webkit-datetime-edit-fields-wrapper {
+    color: var(--text-color) !important;
+    background: transparent !important;
+}
+
+input[type="time"]::-webkit-datetime-edit-hour-field,
+input[type="time"]::-webkit-datetime-edit-minute-field {
+    color: var(--text-color) !important;
+    background: transparent !important;
+}
+
+input[type="time"]::-webkit-datetime-edit-text {
+    color: var(--text-color) !important;
+    background: transparent !important;
+}
+
+/* Ensure no scroll wheel interference */
+input[type="time"] {
+    overflow: hidden;
+}
+
+/* Fix for Chrome/Edge time input clear selection on focus */
+input[type="time"]:focus {
+    user-select: all;
+}
+
+/* Number Input Fixes */
+/* Remove spinner arrows from number inputs to prevent scroll issues */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--input-bg);
+    border: 2px solid var(--input-border);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    transition: all 0.2s ease;
+    min-width: 80px;
+    font-family: inherit;
+}
+
+input[type="number"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    user-select: all;
+}
+
+input[type="number"]:hover {
+    border-color: var(--primary-color);
+}
+
+/* Ensure no scroll wheel interference on number inputs */
+input[type="number"] {
+    overflow: hidden;
 }

@@ -1,0 +1,347 @@
+/* DataExport Component Styles */
+.data-export {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem auto;
+    max-width: 600px;
+}
+
+.data-export h3 {
+    color: var(--text-color);
+    margin: 0 0 1.5rem 0;
+    font-size: 1.3rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.data-export h4 {
+    color: var(--text-color);
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Export Section */
+.export-section {
+    margin-bottom: 2rem;
+}
+
+.export-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.export-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--background-color);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 160px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.export-btn:hover:not(:disabled) {
+    background: var(--hover-color);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+.export-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--disabled-background);
+    color: var(--disabled-text);
+}
+
+.export-btn .btn-description {
+    font-size: 0.8rem;
+    font-weight: normal;
+    margin-top: 0.5rem;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.csv-btn {
+    border-color: #28a745;
+}
+
+.csv-btn:hover:not(:disabled) {
+    border-color: #28a745;
+    background: #28a74510;
+}
+
+.json-btn {
+    border-color: #007bff;
+}
+
+.json-btn:hover:not(:disabled) {
+    border-color: #007bff;
+    background: #007bff10;
+}
+
+.no-data-message {
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: var(--info-background);
+    border-radius: 6px;
+    border-left: 4px solid var(--info-color);
+}
+
+/* Import Section */
+.import-section {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.5rem;
+}
+
+.import-options {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.import-type-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.import-type-label:hover {
+    background: var(--hover-color);
+    border-color: var(--primary-color);
+}
+
+.import-type-label input[type="radio"] {
+    margin-top: 0.2rem;
+}
+
+.import-type-label span {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.import-type-label small {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.import-type-label:has(input:checked) {
+    background: var(--primary-background);
+    border-color: var(--primary-color);
+}
+
+/* File Input */
+.file-input-container {
+    margin-bottom: 1.5rem;
+}
+
+.file-input {
+    display: none;
+}
+
+.file-input-label {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    text-align: center;
+    min-width: 200px;
+}
+
+.file-input-label:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px var(--shadow-color);
+}
+
+.file-input:disabled+.file-input-label {
+    background: var(--disabled-background);
+    color: var(--disabled-text);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Import Info */
+.import-info {
+    background: var(--info-background);
+    border: 1px solid var(--info-color);
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.import-info p {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+.import-info ul {
+    margin: 0;
+    padding-left: 1.5rem;
+}
+
+.import-info li {
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.import-info strong {
+    color: var(--text-color);
+}
+
+/* Status Messages */
+.import-message {
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+    font-weight: 600;
+    border-left: 4px solid;
+    animation: slideIn 0.3s ease;
+}
+
+.import-message.success {
+    background: var(--success-background);
+    color: var(--success-text);
+    border-left-color: var(--success-color);
+}
+
+.import-message.error {
+    background: var(--error-background);
+    color: var(--error-text);
+    border-left-color: var(--error-color);
+}
+
+.import-message.warning {
+    background: var(--warning-background);
+    color: var(--warning-text);
+    border-left-color: var(--warning-color);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .export-buttons {
+        flex-direction: column;
+    }
+
+    .export-btn {
+        min-width: 100%;
+    }
+
+    .import-options {
+        gap: 0.5rem;
+    }
+
+    .import-type-label {
+        padding: 0.5rem;
+    }
+}
+
+/* Dark Mode Variables (will be included in App.css) */
+[data-theme="dark"] .data-export {
+    --info-background: #1a2332;
+    --info-color: #3498db;
+    --success-background: #1e3a2a;
+    --success-color: #27ae60;
+    --success-text: #7ed321;
+    --error-background: #3a1e1e;
+    --error-color: #e74c3c;
+    --error-text: #ff6b6b;
+    --warning-background: #3a2e1e;
+    --warning-color: #f39c12;
+    --warning-text: #ffd93d;
+    --disabled-background: #2c3e50;
+    --disabled-text: #7f8c8d;
+    --primary-background: #2c3e50;
+}
+
+[data-theme="light"] .data-export {
+    --info-background: #e8f4fd;
+    --info-color: #3498db;
+    --success-background: #e8f5e8;
+    --success-color: #27ae60;
+    --success-text: #27ae60;
+    --error-background: #fdeaea;
+    --error-color: #e74c3c;
+    --error-text: #e74c3c;
+    --warning-background: #fef9e7;
+    --warning-color: #f39c12;
+    --warning-text: #f39c12;
+    --disabled-background: #f8f9fa;
+    --disabled-text: #6c757d;
+    --primary-background: #e3f2fd;
+}
+
+/* ============================================================
+   ENHANCED SCROLLBARS FOR DATA EXPORT
+   ============================================================ */
+
+/* Main data export container - no scrolling for main component */
+/* The .data-export container now uses only the original padding: 1.5rem for even spacing */
+/* Removed: max-height: 85vh; overflow-y: auto; padding-right: 8px; */
+
+/* Removed scrollbar styles for .data-export since it's no longer scrollable */
+
+/* Import info section with custom scrollbar */
+.import-info {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.import-info::-webkit-scrollbar {
+    width: 6px;
+}
+
+.import-info::-webkit-scrollbar-track {
+    background: var(--hover-bg);
+    border-radius: 3px;
+}
+
+.import-info::-webkit-scrollbar-thumb {
+    background: rgba(23, 162, 184, 0.7);
+    border-radius: 3px;
+}
+
+.import-info::-webkit-scrollbar-thumb:hover {
+    background: rgba(23, 162, 184, 0.9);
+}
+
+/* Removed focus-related scrollbar styles since main container is no longer scrollable */

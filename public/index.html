@@ -23,6 +23,31 @@
     <meta name="mobile-web-app-capable" content="yes" />
 
     <title>Zeit Tracking App</title>
+
+    <!-- Theme initialization script to prevent flash -->
+    <script>
+        (function () {
+            try {
+                const savedTheme = localStorage.getItem('theme');
+                let theme = 'light';
+
+                if (savedTheme) {
+                    theme = savedTheme;
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    theme = 'dark';
+                }
+
+                document.documentElement.setAttribute('data-theme', theme);
+            } catch (e) {
+                // If localStorage is not available, use system preference
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                }
+            }
+        })();
+    </script>
 </head>
 
 <body>

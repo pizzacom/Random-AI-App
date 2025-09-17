@@ -1,15 +1,21 @@
 .time-entry {
-    background: #ffffff;
+    background: var(--card-bg);
     border-radius: 8px;
     padding: 1.5rem;
     margin-bottom: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-left: 4px solid #007bff;
+    box-shadow: 0 2px 4px var(--shadow);
+    border-left: 4px solid var(--primary-color);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
-.time-entry.editing {
+[data-theme="light"] .time-entry.editing {
     border-left-color: #ffc107;
     background: #fffbf0;
+}
+
+[data-theme="dark"] .time-entry.editing {
+    border-left-color: #ffc107;
+    background: #3d3d1f;
 }
 
 .time-entry-header {
@@ -18,13 +24,15 @@
     gap: 0.75rem;
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid #e9ecef;
+    border-bottom: 1px solid var(--border-color);
+    transition: border-color 0.3s ease;
 }
 
 .time-entry-header h4 {
     margin: 0;
-    color: #2c3e50;
+    color: var(--text-color);
     font-size: 1.1rem;
+    transition: color 0.3s ease;
 }
 
 .time-entry-actions {
@@ -54,19 +62,19 @@
 
 .time-field .label {
     font-size: 0.8rem;
-    color: #6c757d;
+    color: var(--text-secondary);
     margin-bottom: 0.25rem;
     font-weight: 500;
 }
 
 .time-field .value {
     font-size: 1rem;
-    color: #495057;
+    color: var(--text-color);
     font-weight: 500;
 }
 
 .time-field .value.highlight {
-    color: #007bff;
+    color: var(--primary-color);
     font-weight: 600;
 }
 
@@ -78,13 +86,13 @@
 
 .description .label {
     font-size: 0.8rem;
-    color: #6c757d;
+    color: var(--text-secondary);
     font-weight: 500;
 }
 
 .description .value {
     font-size: 0.9rem;
-    color: #495057;
+    color: var(--text-color);
     font-style: italic;
 }
 
@@ -110,31 +118,38 @@
 
 .form-group label {
     font-size: 0.9rem;
-    color: #495057;
+    color: var(--text-color);
     margin-bottom: 0.5rem;
     font-weight: 500;
 }
 
 .form-group input {
     padding: 0.5rem;
-    border: 2px solid #e9ecef;
+    border: 2px solid var(--border-color);
     border-radius: 4px;
     font-size: 0.9rem;
+    background: var(--input-background);
+    color: var(--text-color);
     transition: border-color 0.2s ease;
 }
 
 .form-group input:focus {
     outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-color-alpha);
+}
+
+.form-group input::placeholder {
+    color: var(--placeholder-color);
+    opacity: 1;
 }
 
 .form-group input.error {
-    border-color: #dc3545;
+    border-color: var(--error-color);
 }
 
 .error-text {
-    color: #dc3545;
+    color: var(--error-color);
     font-size: 0.8rem;
     margin-top: 0.25rem;
 }
@@ -154,42 +169,42 @@
 }
 
 .btn-edit {
-    background-color: #6c757d;
+    background-color: var(--secondary-color);
     color: white;
 }
 
 .btn-edit:hover {
-    background-color: #5a6268;
+    background-color: var(--secondary-hover);
     transform: translateY(-1px);
 }
 
 .btn-delete {
-    background-color: #dc3545;
+    background-color: var(--error-color);
     color: white;
 }
 
 .btn-delete:hover {
-    background-color: #c82333;
+    background-color: var(--error-hover);
     transform: translateY(-1px);
 }
 
 .btn-save {
-    background-color: #28a745;
+    background-color: var(--success-color);
     color: white;
 }
 
 .btn-save:hover {
-    background-color: #218838;
+    background-color: var(--success-hover);
     transform: translateY(-1px);
 }
 
 .btn-cancel {
-    background-color: #6c757d;
+    background-color: var(--secondary-color);
     color: white;
 }
 
 .btn-cancel:hover {
-    background-color: #5a6268;
+    background-color: var(--secondary-hover);
     transform: translateY(-1px);
 }
 

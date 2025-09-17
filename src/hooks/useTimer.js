@@ -16,12 +16,34 @@ export const useTimer = () => {
     });
 
     const [currentTime, setCurrentTime] = useState(new Date());
+    const [timerMinutes, setTimerMinutes] = useState(0); // Track timer minutes separately
     const intervalRef = useRef(null);
 
-    // Update current time every second for the digital clock
+    // Update current time every second for the digital clock, timer minutes separately
     useEffect(() => {
         intervalRef.current = setInterval(() => {
-            setCurrentTime(new Date());
+            const now = new Date();
+            setCurrentTime(now);
+
+            // Update timer minutes only when timer is running
+            if (timerState.isRunning && timerState.startTimestamp) {
+                const startTime = new Date(timerState.startTimestamp);
+
+                // Calculate elapsed minutes based on real-time minute boundaries
+                const startMinutes = startTime.getHours() * 60 + startTime.getMinutes();
+                const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+                // Handle day boundary crossing
+                let elapsedMinutes;
+                if (currentMinutes >= startMinutes) {
+                    elapsedMinutes = currentMinutes - startMinutes;
+                } else {
+                    // Crossed midnight
+                    elapsedMinutes = (24 * 60 - startMinutes) + currentMinutes;
+                }
+
+                setTimerMinutes(elapsedMinutes);
+            }
         }, 1000);
 
         return () => {
@@ -35,14 +57,29 @@ export const useTimer = () => {
     useEffect(() => {
         if (timerState.isRunning && timerState.startTimestamp) {
             // Timer was running when page was closed - keep it running
-            const now = new Date().getTime();
-            const elapsedMs = now - timerState.startTimestamp;
-            const elapsedMinutes = Math.floor(elapsedMs / (1000 * 60));
+            const now = new Date();
+            const startTime = new Date(timerState.startTimestamp);
+
+            // Calculate elapsed minutes based on real-time minute boundaries
+            const startMinutes = startTime.getHours() * 60 + startTime.getMinutes();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+            // Handle day boundary crossing
+            let elapsedMinutes;
+            if (currentMinutes >= startMinutes) {
+                elapsedMinutes = currentMinutes - startMinutes;
+            } else {
+                // Crossed midnight
+                elapsedMinutes = (24 * 60 - startMinutes) + currentMinutes;
+            }
 
             console.log(`Timer wiederherstellen: Timer war ${elapsedMinutes} Minuten aktiv`);
 
+            // Initialize timer minutes for restored timer
+            setTimerMinutes(elapsedMinutes);
+
             // Check if timer has been running for more than 24 hours (likely a mistake)
-            if (elapsedMs > 24 * 60 * 60 * 1000) {
+            if (elapsedMinutes > 24 * 60) {
                 console.warn('Timer läuft bereits über 24 Stunden - möglicherweise vergessen zu stoppen?');
             }
 
@@ -59,6 +96,8 @@ export const useTimer = () => {
     const startTimer = (description = '') => {
         const now = new Date();
         const today = getCurrentDate();
+
+        setTimerMinutes(0); // Reset timer minutes when starting
 
         setTimerState({
             isRunning: true,
@@ -140,15 +179,34 @@ export const useTimer = () => {
     };
 
     /**
-     * Get current elapsed time in minutes (based on exact timestamps)
+     * Get current elapsed time in minutes (based on real-time minute boundaries)
      * @returns {number} Elapsed time in minutes
      */
     const getElapsedTime = () => {
         if (!timerState.startTimestamp) return 0;
 
-        const currentTimestamp = timerState.isRunning ? currentTime.getTime() : timerState.endTimestamp;
-        const durationMs = currentTimestamp - timerState.startTimestamp;
-        return Math.floor(durationMs / (1000 * 60)); // Floor for real-time display
+        if (timerState.isRunning) {
+            // When running, use the timerMinutes state which updates based on real-time minute boundaries
+            return timerMinutes;
+        } else {
+            // When stopped, calculate from end timestamp using real-time minute boundaries
+            const startTime = new Date(timerState.startTimestamp);
+            const endTime = new Date(timerState.endTimestamp);
+
+            const startMinutes = startTime.getHours() * 60 + startTime.getMinutes();
+            const endMinutes = endTime.getHours() * 60 + endTime.getMinutes();
+
+            // Handle day boundary crossing
+            let elapsedMinutes;
+            if (endMinutes >= startMinutes) {
+                elapsedMinutes = endMinutes - startMinutes;
+            } else {
+                // Crossed midnight
+                elapsedMinutes = (24 * 60 - startMinutes) + endMinutes;
+            }
+
+            return elapsedMinutes;
+        }
     };
 
     /**

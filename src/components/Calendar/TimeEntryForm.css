@@ -1,10 +1,11 @@
 .time-entry-form-container {
-    background: #ffffff;
-    border: 2px solid #007bff;
+    background: var(--card-bg);
+    border: 2px solid var(--primary-color);
     border-radius: 8px;
     padding: 1.5rem;
     margin-bottom: 2rem;
-    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
+    box-shadow: 0 2px 8px var(--shadow);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .form-header {
@@ -14,8 +15,9 @@
 
 .form-header h3 {
     margin: 0;
-    color: #2c3e50;
+    color: var(--text-color);
     font-size: 1.2rem;
+    transition: color 0.3s ease;
 }
 
 .time-entry-form {
@@ -40,43 +42,146 @@
 .form-group label {
     margin-bottom: 0.5rem;
     font-weight: 500;
-    color: #495057;
+    color: var(--text-color);
     font-size: 0.9rem;
+    transition: color 0.3s ease;
 }
 
 .form-group input {
     padding: 0.75rem;
-    border: 2px solid #e9ecef;
+    border: 2px solid var(--border-color);
     border-radius: 4px;
+    background: var(--input-bg);
+    color: var(--text-color);
     font-size: 1rem;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s ease, background 0.3s ease, color 0.3s ease;
 }
 
 .form-group input:focus {
     outline: none;
-    border-color: #007bff;
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
 .form-group input.error {
-    border-color: #dc3545;
+    border-color: var(--danger-color);
 }
 
+/* Custom styling for time inputs */
+.form-group input[type="time"] {
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--input-bg);
+    color: var(--text-color);
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.2s ease, background 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+    min-width: 140px;
+    position: relative;
+}
+
+.form-group input[type="time"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.form-group input[type="time"]:hover {
+    border-color: var(--primary-color);
+}
+
+/* Style the time picker dropdown icon to match our design */
+.form-group input[type="time"]::-webkit-calendar-picker-indicator {
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 16px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+    padding: 2px;
+    margin-left: 4px;
+    opacity: 0.7;
+}
+
+.form-group input[type="time"]::-webkit-calendar-picker-indicator:hover {
+    background-color: var(--primary-color);
+    opacity: 1;
+}
+
+/* Firefox-specific styles */
+.form-group input[type="time"]::-moz-calendar-picker-indicator {
+    background: var(--input-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    padding: 2px;
+    opacity: 0.7;
+}
+
+.form-group input[type="time"]::-moz-calendar-picker-indicator:hover {
+    background-color: var(--primary-color);
+    opacity: 1;
+}
+
+/* Custom time picker icon */
 .input-with-button {
     display: flex;
     gap: 0.5rem;
     align-items: center;
+    position: relative;
 }
 
 .input-with-button input {
     flex: 1;
 }
 
+/* Custom styling for number inputs (break duration) */
+.form-group input[type="number"] {
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--input-bg);
+    color: var(--text-color);
+    font-size: 1rem;
+    transition: border-color 0.2s ease, background 0.3s ease, color 0.3s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.form-group input[type="number"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.form-group input[type="number"]:hover {
+    border-color: var(--primary-color);
+}
+
+/* Hide default number input arrows */
+.form-group input[type="number"]::-webkit-outer-spin-button,
+.form-group input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.form-group input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
 .btn-small {
     padding: 0.5rem;
     font-size: 0.9rem;
     min-width: auto;
-    background-color: #6c757d;
+    background-color: var(--btn-secondary);
     color: white;
     border: none;
     border-radius: 4px;
@@ -85,11 +190,11 @@
 }
 
 .btn-small:hover {
-    background-color: #5a6268;
+    background-color: var(--btn-secondary-hover);
 }
 
 .error-text {
-    color: #dc3545;
+    color: var(--danger-color);
     font-size: 0.8rem;
     margin-top: 0.5rem;
     font-weight: 500;

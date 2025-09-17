@@ -10,10 +10,11 @@
 
 /* Calendar Grid Section */
 .calendar-grid-section {
-    background: #ffffff;
+    background: var(--card-bg);
     border-radius: 12px;
     padding: 1.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px var(--shadow);
+    transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .calendar-header {
@@ -22,9 +23,10 @@
 }
 
 .calendar-header h2 {
-    color: #2c3e50;
+    color: var(--text-color);
     margin-bottom: 1rem;
     font-size: 1.8rem;
+    transition: color 0.3s ease;
 }
 
 .calendar-navigation {
@@ -52,11 +54,12 @@
 }
 
 .current-month {
-    color: #2c3e50;
+    color: var(--text-color);
     font-size: 1.4rem;
     margin: 0;
     text-transform: capitalize;
     min-width: 200px;
+    transition: color 0.3s ease;
 }
 
 .today-btn {
@@ -77,30 +80,50 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 0.85rem;
-    color: #495057;
+    color: var(--text-color);
+    transition: color 0.3s ease;
 }
 
 .legend-color {
     width: 16px;
     height: 16px;
     border-radius: 3px;
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--border-color);
+    transition: border-color 0.3s ease;
 }
 
-.legend-color.none {
+/* Light mode legend colors */
+[data-theme="light"] .legend-color.none {
     background: #f8f9fa;
 }
 
-.legend-color.light {
+[data-theme="light"] .legend-color.light {
     background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
 }
 
-.legend-color.normal {
+[data-theme="light"] .legend-color.normal {
     background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
 }
 
-.legend-color.heavy {
+[data-theme="light"] .legend-color.heavy {
     background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+}
+
+/* Dark mode legend colors */
+[data-theme="dark"] .legend-color.none {
+    background: #4a5568;
+}
+
+[data-theme="dark"] .legend-color.light {
+    background: linear-gradient(135deg, #4299e1 0%, #63b3ed 100%);
+}
+
+[data-theme="dark"] .legend-color.normal {
+    background: linear-gradient(135deg, #48bb78 0%, #68d391 100%);
+}
+
+[data-theme="dark"] .legend-color.heavy {
+    background: linear-gradient(135deg, #ed8936 0%, #f6ad55 100%);
 }
 
 /* Calendar Grid */
@@ -108,26 +131,54 @@
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 2px;
-    background: #e9ecef;
-    border-radius: 8px;
-    padding: 2px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: transparent;
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 0 2px 8px var(--shadow);
+    transition: all 0.3s ease;
+    border: 1px solid var(--calendar-grid-border);
+}
+
+/* Calendar grid border colors - specific for better visibility */
+[data-theme="light"] .calendar-grid {
+    --calendar-grid-border: #d1d5db;
+}
+
+[data-theme="dark"] .calendar-grid {
+    --calendar-grid-border: #6b7280;
 }
 
 .calendar-weekday {
-    background: #495057;
-    color: white;
-    padding: 0.75rem 0.5rem;
+    background: var(--weekday-bg);
+    color: var(--weekday-text);
+    padding: 1rem 0.5rem;
     text-align: center;
-    font-weight: 600;
-    font-size: 0.9rem;
+    font-weight: 700;
+    font-size: 0.8rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
+    position: relative;
+    border-radius: 6px 6px 0 0;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 -2px 0 var(--weekday-accent);
+}
+
+/* Weekday header colors */
+[data-theme="light"] .calendar-weekday {
+    --weekday-bg: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    --weekday-text: #374151;
+    --weekday-accent: #3b82f6;
+}
+
+[data-theme="dark"] .calendar-weekday {
+    --weekday-bg: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+    --weekday-text: #e5e7eb;
+    --weekday-accent: #60a5fa;
 }
 
 .calendar-day {
-    background: #ffffff;
-    min-height: 60px;
+    background: var(--card-bg);
+    min-height: 70px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -135,19 +186,21 @@
     cursor: pointer;
     transition: all 0.2s ease;
     position: relative;
-    border-radius: 4px;
+    border-radius: 6px;
 }
 
 .calendar-day:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: scale(1.02);
+    box-shadow: inset 0 0 0 2px var(--primary-color);
     z-index: 2;
 }
 
 .calendar-day.empty {
-    background: #f8f9fa;
+    background: var(--calendar-empty-bg);
     cursor: default;
     pointer-events: none;
+    color: var(--text-color-secondary);
+    opacity: 0.3;
 }
 
 .calendar-day.empty:hover {
@@ -155,41 +208,77 @@
     box-shadow: none;
 }
 
-/* Work Intensity Colors */
-.calendar-day.none {
+/* Empty day colors */
+[data-theme="light"] .calendar-day.empty {
+    --calendar-empty-bg: #f9fafb;
+}
+
+[data-theme="dark"] .calendar-day.empty {
+    --calendar-empty-bg: #1f2937;
+}
+
+/* Light mode work intensity colors */
+[data-theme="light"] .calendar-day.none {
     background: #f8f9fa;
     color: #6c757d;
 }
 
-.calendar-day.light {
+[data-theme="light"] .calendar-day.light {
     background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
     color: #1565c0;
 }
 
-.calendar-day.normal {
+[data-theme="light"] .calendar-day.normal {
     background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
     color: white;
 }
 
-.calendar-day.heavy {
+[data-theme="light"] .calendar-day.heavy {
     background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
     color: white;
 }
 
+/* Dark mode work intensity colors */
+[data-theme="dark"] .calendar-day.empty {
+    background: #4a5568;
+    color: #718096;
+    opacity: 0.6;
+}
+
+[data-theme="dark"] .calendar-day.none {
+    background: #4a5568;
+    color: #a0aec0;
+}
+
+[data-theme="dark"] .calendar-day.light {
+    background: linear-gradient(135deg, #4299e1 0%, #63b3ed 100%);
+    color: #1a202c;
+}
+
+[data-theme="dark"] .calendar-day.normal {
+    background: linear-gradient(135deg, #48bb78 0%, #68d391 100%);
+    color: #1a202c;
+}
+
+[data-theme="dark"] .calendar-day.heavy {
+    background: linear-gradient(135deg, #ed8936 0%, #f6ad55 100%);
+    color: #1a202c;
+}
+
 /* Selected and Today States */
 .calendar-day.selected {
-    border: 3px solid #007bff;
+    border: 3px solid var(--primary-color);
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
 .calendar-day.today {
-    border: 2px solid #dc3545;
+    border: 2px solid var(--danger-color);
     font-weight: bold;
 }
 
 .calendar-day.today.selected {
-    border: 3px solid #007bff;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25), inset 0 0 0 1px #dc3545;
+    border: 3px solid var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25), inset 0 0 0 1px var(--danger-color);
 }
 
 .day-number {
@@ -212,28 +301,27 @@
 
 /* Selected Day Section */
 .selected-day-section {
-    background: #ffffff;
+    background: var(--card-bg);
     border-radius: 12px;
     padding: 1.5rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px var(--shadow);
     height: fit-content;
-    max-height: 80vh;
-    overflow-y: auto;
-    position: sticky;
-    top: 2rem;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .selected-date-header {
     text-align: center;
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 2px solid #e9ecef;
+    border-bottom: 2px solid var(--border-color);
+    transition: border-color 0.3s ease;
 }
 
 .selected-date-header h3 {
-    color: #2c3e50;
+    color: var(--text-color);
     margin: 0 0 0.5rem 0;
     font-size: 1.3rem;
+    transition: color 0.3s ease;
 }
 
 .day-summary {
@@ -245,12 +333,13 @@
 
 .entries-count,
 .total-time {
-    background: #f8f9fa;
+    background: var(--bg-color);
     padding: 0.25rem 0.75rem;
     border-radius: 20px;
     font-size: 0.85rem;
-    color: #495057;
+    color: var(--text-color);
     font-weight: 500;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 .total-time {
@@ -281,21 +370,23 @@
 }
 
 .btn-primary {
-    background-color: #007bff;
+    background-color: #28a745;
     color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    font-weight: 600;
+    font-size: 1.1rem;
 }
 
 .btn-primary:hover:not(:disabled) {
-    background-color: #0056b3;
+    background-color: #218838;
     transform: translateY(-1px);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .time-entries-list {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    max-height: 50vh;
-    overflow-y: auto;
     padding-right: 0.5rem;
 }
 
@@ -320,20 +411,21 @@
 .no-entries {
     text-align: center;
     padding: 3rem 2rem;
-    color: #6c757d;
-    background: #f8f9fa;
+    color: var(--text-color-secondary);
+    background: var(--card-bg);
     border-radius: 8px;
-    border: 2px dashed #dee2e6;
+    border: 2px dashed var(--border-color);
 }
 
 .no-entries p {
     margin: 0.5rem 0;
+    color: var(--text-color-secondary);
 }
 
 .no-entries p:first-child {
     font-size: 1.1rem;
     font-weight: 500;
-    color: #495057;
+    color: var(--text-color);
 }
 
 /* Mobile responsiveness */
@@ -424,12 +516,13 @@
 
 @media (max-width: 480px) {
     .calendar-weekday {
-        padding: 0.5rem 0.25rem;
-        font-size: 0.8rem;
+        padding: 0.75rem 0.25rem;
+        font-size: 0.7rem;
+        letter-spacing: 0.5px;
     }
 
     .calendar-day {
-        min-height: 45px;
+        min-height: 50px;
     }
 
     .day-number {
@@ -449,4 +542,31 @@
         width: 12px;
         height: 12px;
     }
+}
+
+/* ============================================================
+   ENHANCED SCROLLBARS FOR CALENDAR
+   ============================================================ */
+
+/* Selected day section - scrolling removed for better UX */
+
+/* Time entries list - scrolling removed for better UX */
+
+/* Calendar grid scrollable area */
+.calendar-grid {
+    overflow: visible;
+    /* Calendar grid doesn't typically scroll */
+}
+
+/* Smooth transitions for scrollable elements */
+.selected-day-section,
+.time-entries-list {
+    transition: all 0.3s ease;
+}
+
+/* Enhanced focus states for keyboard navigation */
+.selected-day-section:focus-within::-webkit-scrollbar-thumb,
+.time-entries-list:focus-within::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, var(--primary-color), #ff6b6b);
+    box-shadow: 0 0 16px rgba(255, 107, 107, 0.3);
 }

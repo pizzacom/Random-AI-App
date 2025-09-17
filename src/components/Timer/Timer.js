@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useTimer } from '../../hooks/useTimer';
 import { useTimeEntries } from '../../hooks/useTimeEntries';
+import { useLanguage } from '../../contexts/LanguageContext';
 import './Timer.css';
 
 const Timer = () => {
+    const { t, currentLanguage } = useLanguage();
     const {
         isRunning,
         startTime,
@@ -68,19 +70,43 @@ const Timer = () => {
         }
     };
 
+    // Prevent scroll wheel from changing number values
+    const handleNumberInputWheel = (e) => {
+        e.preventDefault();
+        e.target.blur();
+    };
+
+    // Handle focus to select all text for easier editing
+    const handleNumberInputFocus = (e) => {
+        setTimeout(() => {
+            e.target.select();
+        }, 0);
+    };
+
+    // Better break duration change handler
+    const handleBreakDurationChange = (e) => {
+        const value = e.target.value;
+        // Allow empty input for easier editing
+        if (value === '') {
+            setBreakDuration('');
+        } else {
+            setBreakDuration(parseInt(value) || 0);
+        }
+    };
+
     return (
         <div className="timer-container">
             {/* Timer Restored Notification */}
             {showRestoredMessage && (
                 <div className="timer-restored-message">
-                    ✅ Timer wurde wiederhergestellt - läuft seit {startTime}
+                    ✅ {t('timerRestored')} {startTime}
                 </div>
             )}
 
             {/* Digital Clock Display */}
             <div className="digital-clock">
                 <div className="current-time">
-                    <span className="clock-label">Aktuelle Zeit:</span>
+                    <span className="clock-label">{t('currentTimer')}:</span>
                     <span className="clock-time">{digitalClock}</span>
                 </div>
             </div>
@@ -90,7 +116,7 @@ const Timer = () => {
                     {formattedElapsedTime}
                 </div>
                 <div className="timer-status">
-                    {isRunning ? 'Läuft...' : 'Gestoppt'}
+                    {isRunning ? t('timerRunning') : t('timerStopped')}
                 </div>
             </div>
 
@@ -98,7 +124,7 @@ const Timer = () => {
                 {isRunning && (
                     <>
                         <div className="timer-start-info">
-                            <span>Gestartet: {startTime} ({date})</span>
+                            <span>{t('startTime')}: {startTime} ({date})</span>
                         </div>
                     </>
                 )}
@@ -106,27 +132,29 @@ const Timer = () => {
 
             <div className="timer-form">
                 <div className="form-group">
-                    <label htmlFor="description">Beschreibung (optional):</label>
+                    <label htmlFor="description">{t('description')}:</label>
                     <input
                         type="text"
                         id="description"
                         value={timerDescription}
                         onChange={handleDescriptionChange}
-                        placeholder="Was machst du gerade?"
+                        placeholder={t('enterDescription')}
                         disabled={isRunning}
                     />
                 </div>
 
                 {!isRunning && (
                     <div className="form-group">
-                        <label htmlFor="breakDuration">Pause (Minuten):</label>
+                        <label htmlFor="breakDuration">{t('breakDuration')}:</label>
                         <input
                             type="number"
                             id="breakDuration"
                             value={breakDuration}
-                            onChange={(e) => setBreakDuration(parseInt(e.target.value) || 0)}
+                            onChange={handleBreakDurationChange}
+                            onWheel={handleNumberInputWheel}
+                            onFocus={handleNumberInputFocus}
                             min="0"
-                            placeholder="0"
+                            placeholder={t('enterBreakDuration')}
                         />
                     </div>
                 )}
@@ -138,14 +166,14 @@ const Timer = () => {
                         className="btn btn-start"
                         onClick={handleStart}
                     >
-                        ▶ Starten
+                        ▶ {t('startTimer')}
                     </button>
                 ) : (
                     <button
                         className="btn btn-stop"
                         onClick={handleStop}
                     >
-                        ⏹ Stoppen
+                        ⏹ {t('stopTimer')}
                     </button>
                 )}
 
@@ -154,15 +182,9 @@ const Timer = () => {
                     onClick={handleReset}
                     disabled={!isRunning && !startTime}
                 >
-                    🔄 Zurücksetzen
+                    🔄 {t('resetTimer')}
                 </button>
             </div>
-
-            {isRunning && (
-                <div className="timer-warning">
-                    <p>⚠️ Der Timer läuft. Schließe nicht das Browser-Fenster.</p>
-                </div>
-            )}
         </div>
     );
 };

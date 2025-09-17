@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
 import { useTimeEntries } from '../../hooks/useTimeEntries';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { getCurrentDate, formatDateGerman } from '../../utils/timeCalculations';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths, getDay } from 'date-fns';
-import { de } from 'date-fns/locale';
+import { de, enUS } from 'date-fns/locale';
 import TimeEntry from '../TimeEntry/TimeEntry';
 import TimeEntryForm from './TimeEntryForm';
+import ConfirmDialog from '../ConfirmDialog/ConfirmDialog';
 import './Calendar.css';
 
 const Calendar = () => {
+    const { t, currentLanguage } = useLanguage();
     const { addTimeEntry, updateTimeEntry, deleteTimeEntry, getEntriesForDate } = useTimeEntries();
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState(getCurrentDate());
     const [editingEntryId, setEditingEntryId] = useState(null);
     const [showForm, setShowForm] = useState(false);
+    const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, entryId: null });
 
     const selectedEntries = getEntriesForDate(selectedDate);
 
@@ -25,7 +29,13 @@ const Calendar = () => {
     const startPadding = getDay(monthStart) === 0 ? 6 : getDay(monthStart) - 1; // Monday = 0
     const paddingDays = Array(startPadding).fill(null);
 
-    const allCalendarDays = [...paddingDays, ...daysInMonth];
+    // Add trailing days to complete the grid (minimum 5 weeks = 35 days, maximum 6 weeks = 42 days)
+    const totalDaysWithPadding = paddingDays.length + daysInMonth.length;
+    const weeksNeeded = Math.ceil(totalDaysWithPadding / 7);
+    const totalDaysNeeded = weeksNeeded * 7;
+    const trailingPadding = totalDaysWithPadding < totalDaysNeeded ? Array(totalDaysNeeded - totalDaysWithPadding).fill(null) : [];
+
+    const allCalendarDays = [...paddingDays, ...daysInMonth, ...trailingPadding];
 
     // Get work intensity for a day based on total hours
     const getWorkIntensity = (date) => {
@@ -75,9 +85,23 @@ const Calendar = () => {
     };
 
     const handleDeleteEntry = (id) => {
-        if (window.confirm('Eintrag wirklich löschen?')) {
-            deleteTimeEntry(id);
+        if (!id) {
+            console.warn('Cannot delete entry: No ID provided. This might be an old entry without proper ID.');
+            alert('Cannot delete this entry. It appears to be an old entry without proper identification.');
+            return;
         }
+        setConfirmDialog({ isOpen: true, entryId: id });
+    };
+
+    const handleConfirmDelete = () => {
+        if (confirmDialog.entryId) {
+            deleteTimeEntry(confirmDialog.entryId);
+        }
+        setConfirmDialog({ isOpen: false, entryId: null });
+    };
+
+    const handleCancelDelete = () => {
+        setConfirmDialog({ isOpen: false, entryId: null });
     };
 
     const handleEditEntry = (id) => {
@@ -98,29 +122,32 @@ const Calendar = () => {
         setShowForm(false);
     };
 
-    const weekDays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+    const weekDays = [
+        t('monday'), t('tuesday'), t('wednesday'),
+        t('thursday'), t('friday'), t('saturday'), t('sunday')
+    ];
 
     return (
         <div className="calendar-container">
             {/* Calendar Grid Section */}
             <div className="calendar-grid-section">
                 <div className="calendar-header">
-                    <h2>Arbeitskalender</h2>
+                    <h2>{t('calendarTitle')}</h2>
 
                     <div className="calendar-navigation">
                         <button className="nav-btn" onClick={handlePrevMonth}>
-                            ← Vorheriger Monat
+                            ← {t('previousMonth')}
                         </button>
                         <h3 className="current-month">
-                            {format(currentMonth, 'MMMM yyyy', { locale: de })}
+                            {format(currentMonth, 'MMMM yyyy', { locale: currentLanguage === 'de' ? de : enUS })}
                         </h3>
                         <button className="nav-btn" onClick={handleNextMonth}>
-                            Nächster Monat →
+                            {t('nextMonth')} →
                         </button>
                     </div>
 
                     <button className="btn btn-secondary today-btn" onClick={handleTodayClick}>
-                        📅 Heute
+                        📅 {t('today')}
                     </button>
                 </div>
 
@@ -128,19 +155,19 @@ const Calendar = () => {
                 <div className="work-legend">
                     <span className="legend-item">
                         <div className="legend-color none"></div>
-                        Keine Arbeit
+                        {currentLanguage === 'de' ? 'Keine Arbeit' : 'No work'}
                     </span>
                     <span className="legend-item">
                         <div className="legend-color light"></div>
-                        Wenig (&lt;2h)
+                        {currentLanguage === 'de' ? 'Wenig (<2h)' : 'Light (<2h)'}
                     </span>
                     <span className="legend-item">
                         <div className="legend-color normal"></div>
-                        Normal (2-6h)
+                        {currentLanguage === 'de' ? 'Normal (2-6h)' : 'Normal (2-6h)'}
                     </span>
                     <span className="legend-item">
                         <div className="legend-color heavy"></div>
-                        Viel (&gt;6h)
+                        {currentLanguage === 'de' ? 'Viel (>6h)' : 'Heavy (>6h)'}
                     </span>
                 </div>
 
@@ -170,7 +197,7 @@ const Calendar = () => {
                                 key={dateStr}
                                 className={`calendar-day ${workIntensity} ${isSelected ? 'selected' : ''} ${isToday ? 'today' : ''}`}
                                 onClick={() => handleDateClick(date)}
-                                title={`${format(date, 'dd.MM.yyyy', { locale: de })} - ${entriesCount} Einträge`}
+                                title={`${format(date, 'dd.MM.yyyy', { locale: currentLanguage === 'de' ? de : enUS })} - ${entriesCount} ${t('entries')}`}
                             >
                                 <div className="day-number">{format(date, 'd')}</div>
                                 {entriesCount > 0 && (
@@ -187,10 +214,10 @@ const Calendar = () => {
                 <div className="selected-date-header">
                     <h3>{formatDateGerman(selectedDate, 'EEEE, dd. MMMM yyyy')}</h3>
                     <div className="day-summary">
-                        <span className="entries-count">{selectedEntries.length} Einträge</span>
+                        <span className="entries-count">{selectedEntries.length} {t('entries')}</span>
                         {selectedEntries.length > 0 && (
                             <span className="total-time">
-                                {Math.round(selectedEntries.reduce((sum, entry) => sum + (entry.duration || 0), 0) / 60 * 10) / 10}h gesamt
+                                {Math.round(selectedEntries.reduce((sum, entry) => sum + (entry.duration || 0), 0) / 60 * 10) / 10}{t('hours')} {t('totalHours')}
                             </span>
                         )}
                     </div>
@@ -202,7 +229,7 @@ const Calendar = () => {
                         onClick={handleShowForm}
                         disabled={showForm || editingEntryId}
                     >
-                        ➕ Neuer Eintrag
+                        + {t('newEntry')}
                     </button>
                 </div>
 
@@ -216,8 +243,8 @@ const Calendar = () => {
                 <div className="time-entries-list">
                     {selectedEntries.length === 0 ? (
                         <div className="no-entries">
-                            <p>Keine Zeiteinträge für dieses Datum.</p>
-                            <p>Klicke auf "Neuer Eintrag" um einen hinzuzufügen.</p>
+                            <p>{t('noEntries')}</p>
+                            <p>{t('clickNewEntry')}</p>
                         </div>
                     ) : (
                         selectedEntries
@@ -236,6 +263,14 @@ const Calendar = () => {
                     )}
                 </div>
             </div>
+
+            {/* Confirmation Dialog */}
+            <ConfirmDialog
+                isOpen={confirmDialog.isOpen}
+                onClose={handleCancelDelete}
+                onConfirm={handleConfirmDelete}
+                type="danger"
+            />
         </div>
     );
 };

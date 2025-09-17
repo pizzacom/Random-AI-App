@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import { format, parseISO } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { formatMinutesToHours, formatMinutesToTime, calculateTotalHours } from './timeCalculations';
@@ -110,7 +110,7 @@ export const generateMonthlyReport = (timeEntries, month, userInfo = {}) => {
     };
 
     // Generate table
-    doc.autoTable(tableConfig);
+    autoTable(doc, tableConfig);
 
     // Add summary section
     const finalY = doc.lastAutoTable.finalY + 20;
