@@ -58,19 +58,13 @@ const InstallPrompt = () => {
 
         window.addEventListener('beforeinstallprompt', handler);
 
-        // Show install instructions if not standalone and no native prompt after 3 seconds
-        const fallbackTimer = setTimeout(() => {
-            if (!isStandalone && !deferredPrompt) {
-                setShowInstallPrompt(true);
-            }
-        }, 3000);
-
         return () => {
             window.removeEventListener('beforeinstallprompt', handler);
             mediaQuery.removeListener(handleDisplayModeChange);
-            clearTimeout(fallbackTimer);
         };
-    }, [deferredPrompt, isStandalone]); const handleInstallClick = async () => {
+    }, [deferredPrompt, isStandalone]);
+
+    const handleInstallClick = async () => {
         if (deferredPrompt) {
             // Show the native install prompt
             deferredPrompt.prompt();
@@ -89,10 +83,6 @@ const InstallPrompt = () => {
                 setIsStandalone(true);
                 localStorage.setItem('pwa-install-dismissed', 'true');
             }
-        } else {
-            // Show manual installation instructions
-            setShowInstallPrompt(false);
-            alert('Manuelle Installation:\n\nChrome/Edge: Klicke auf die drei Punkte (⋮) → "App installieren"\n\nFirefox: Klicke auf die drei Linien (☰) → "Diese Seite als App installieren"\n\nSafari: Teilen-Button → "Zum Home-Bildschirm"');
         }
     };
 
@@ -102,8 +92,8 @@ const InstallPrompt = () => {
         sessionStorage.setItem('install-prompt-dismissed', 'true');
     };
 
-    // Don't show if already installed
-    if (isStandalone || !showInstallPrompt) {
+    // Don't show if already installed or no install prompt available
+    if (isStandalone || !showInstallPrompt || !deferredPrompt) {
         return null;
     }
 
@@ -113,19 +103,14 @@ const InstallPrompt = () => {
                 <div className="install-prompt-icon">📱</div>
                 <div className="install-prompt-text">
                     <h3>App installieren</h3>
-                    <p>
-                        {deferredPrompt
-                            ? 'Installiere die Zeit Tracking App für schnellen Zugriff und Offline-Nutzung.'
-                            : 'Installiere die App über dein Browser-Menü für bessere Nutzung.'
-                        }
-                    </p>
+                    <p>Installiere die Zeit Tracking App für schnellen Zugriff und Offline-Nutzung.</p>
                 </div>
                 <div className="install-prompt-actions">
                     <button
                         className="btn btn-primary"
                         onClick={handleInstallClick}
                     >
-                        {deferredPrompt ? 'Installieren' : 'Anleitung zeigen'}
+                        Installieren
                     </button>
                     <button
                         className="btn btn-secondary"
