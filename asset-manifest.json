@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/Random-AI-App/static/css/main.55fb5770.css",
-    "main.js": "/Random-AI-App/static/js/main.b03ce4f1.js",
+    "main.css": "/Random-AI-App/static/css/main.f7f2f643.css",
+    "main.js": "/Random-AI-App/static/js/main.bc8a6d23.js",
     "static/js/239.2c94b5ff.chunk.js": "/Random-AI-App/static/js/239.2c94b5ff.chunk.js",
     "static/js/977.16634881.chunk.js": "/Random-AI-App/static/js/977.16634881.chunk.js",
     "static/js/455.ae038626.chunk.js": "/Random-AI-App/static/js/455.ae038626.chunk.js",
     "index.html": "/Random-AI-App/index.html",
-    "main.55fb5770.css.map": "/Random-AI-App/static/css/main.55fb5770.css.map",
-    "main.b03ce4f1.js.map": "/Random-AI-App/static/js/main.b03ce4f1.js.map",
+    "main.f7f2f643.css.map": "/Random-AI-App/static/css/main.f7f2f643.css.map",
+    "main.bc8a6d23.js.map": "/Random-AI-App/static/js/main.bc8a6d23.js.map",
     "239.2c94b5ff.chunk.js.map": "/Random-AI-App/static/js/239.2c94b5ff.chunk.js.map",
     "977.16634881.chunk.js.map": "/Random-AI-App/static/js/977.16634881.chunk.js.map",
     "455.ae038626.chunk.js.map": "/Random-AI-App/static/js/455.ae038626.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.55fb5770.css",
-    "static/js/main.b03ce4f1.js"
+    "static/css/main.f7f2f643.css",
+    "static/js/main.bc8a6d23.js"
   ]
 }
