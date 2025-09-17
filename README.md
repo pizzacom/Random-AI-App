@@ -2,11 +2,15 @@
 
 Eine einfache und benutzerfreundliche Zeiterfassungs-Web-App für persönliche oder kleine Teams.
 
+🌐 **Live Demo**: [https://pizzacom.github.io/Random-AI-App/](https://pizzacom.github.io/Random-AI-App/)
+
 ## Features
 
 - **⏱️ Timer-System**: Start/Stop-Funktionalität mit automatischer Zeitberechnung
 - **📅 Kalender-Interface**: Manuelle Zeiteingabe und Bearbeitung von Einträgen
 - **📊 Berichte**: Monatliche Zeitberichte mit Pausenberechnungen, exportierbar als PDF
+- **⚙️ Einstellungen**: Benutzerinformationen und Standard-Pausenzeit konfigurierbar
+- **🌍 Mehrsprachig**: Deutsch und Englisch unterstützt
 - **💾 Offline-Funktionalität**: Lokale Speicherung aller Daten im Browser
 - **📱 Mobile-First Design**: Responsive Design für alle Geräte
 - **🚀 Progressive Web App**: Installierbar auf allen Geräten, arbeitet offline
