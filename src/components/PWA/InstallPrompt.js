@@ -9,15 +9,45 @@ const InstallPrompt = () => {
     useEffect(() => {
         // Check if app is already installed (running in standalone mode)
         const checkStandalone = () => {
-            const standalone = window.matchMedia('(display-mode: standalone)').matches ||
+            const standalone =
+                // Standard PWA standalone detection
+                window.matchMedia('(display-mode: standalone)').matches ||
+                // iOS Safari
                 window.navigator.standalone ||
-                document.referrer.includes('android-app://');
+                // Android app
+                document.referrer.includes('android-app://') ||
+                // Additional checks for installed state
+                window.matchMedia('(display-mode: fullscreen)').matches ||
+                window.matchMedia('(display-mode: minimal-ui)').matches;
+
             setIsStandalone(standalone);
+
+            // Log for debugging
+            console.log('PWA Install Status:', {
+                standalone,
+                displayMode: window.matchMedia('(display-mode: standalone)').matches,
+                navigatorStandalone: window.navigator.standalone,
+                referrer: document.referrer
+            });
         };
 
         checkStandalone();
 
+        // Listen for display mode changes
+        const mediaQuery = window.matchMedia('(display-mode: standalone)');
+        const handleDisplayModeChange = (e) => {
+            setIsStandalone(e.matches);
+            if (e.matches) {
+                setShowInstallPrompt(false);
+            }
+        };
+
+        mediaQuery.addListener(handleDisplayModeChange);
+
         const handler = (e) => {
+            // Don't show if already installed
+            if (isStandalone) return;
+
             // Prevent the mini-infobar from appearing on mobile
             e.preventDefault();
             // Stash the event so it can be triggered later
@@ -37,11 +67,10 @@ const InstallPrompt = () => {
 
         return () => {
             window.removeEventListener('beforeinstallprompt', handler);
+            mediaQuery.removeListener(handleDisplayModeChange);
             clearTimeout(fallbackTimer);
         };
-    }, [deferredPrompt, isStandalone]);
-
-    const handleInstallClick = async () => {
+    }, [deferredPrompt, isStandalone]); const handleInstallClick = async () => {
         if (deferredPrompt) {
             // Show the native install prompt
             deferredPrompt.prompt();
@@ -54,6 +83,12 @@ const InstallPrompt = () => {
             // Clear the deferredPrompt so it can only be used once
             setDeferredPrompt(null);
             setShowInstallPrompt(false);
+
+            // If user accepted, mark as installed and hide prompt permanently
+            if (outcome === 'accepted') {
+                setIsStandalone(true);
+                localStorage.setItem('pwa-install-dismissed', 'true');
+            }
         } else {
             // Show manual installation instructions
             setShowInstallPrompt(false);
@@ -63,6 +98,8 @@ const InstallPrompt = () => {
 
     const handleDismiss = () => {
         setShowInstallPrompt(false);
+        // Remember that user dismissed the prompt for this session
+        sessionStorage.setItem('install-prompt-dismissed', 'true');
     };
 
     // Don't show if already installed
